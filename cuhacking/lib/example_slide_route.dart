@@ -60,7 +60,17 @@ class _ExampleRouteSlideState extends State<ExampleRouteSlide> {
             // otherwise, just hide it
             if (currentCardIndex < cards.length)
               cardControllerRow(_cardController),
+            Center(
+              child: FlatButton(
+                child: Text("Go To Main"),
+                onPressed: () {
+                  // Navigate to the second screen using a named route.
+                  Navigator.pushNamed(context, '/');
+                },
+              ),
+            )
           ],
+
         ),
       ),
     );
