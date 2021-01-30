@@ -3,6 +3,12 @@ import 'package:flutter/services.dart';
 
 import 'example_route.dart';
 import 'example_slide_route.dart';
+import 'package:spotify_sdk/models/connection_status.dart';
+import 'package:spotify_sdk/models/crossfade_state.dart';
+import 'package:spotify_sdk/models/image_uri.dart';
+import 'package:spotify_sdk/models/player_context.dart';
+import 'package:spotify_sdk/models/player_state.dart';
+import 'package:spotify_sdk/spotify_sdk.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -30,11 +36,19 @@ class FirstScreen extends StatelessWidget {
         child: ElevatedButton(
           child: Text('Launch screen'),
           onPressed: () {
-            // Navigate to the second screen using a named route.
-            Navigator.pushNamed(context, '/second');
+            connectToSpotifyRemote();
+            //Navigator.pushNamed(context, '/second');
           },
         ),
       ),
     );
+  }
+
+  Future<void> connectToSpotifyRemote() async {
+      var result = await SpotifySdk.connectToSpotifyRemote(
+          clientId: "ed2803e840844844b3120ab2cc82dcd5",
+          redirectUrl: "www.google.com");
+      print(result);
+
   }
 }
