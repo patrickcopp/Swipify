@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:spotify_sdk/models/player_context.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:http/http.dart' as http;
+import "dart:math";
 
 var CLIENT_STRING = "ed2803e840844844b3120ab2cc82dcd5";
 var REDIRECT_URL = "http://localhost:8888/callback";
@@ -52,7 +54,7 @@ class FirstScreen extends StatelessWidget {
   }
 
   Future<void> connectToSpotifyRemote(BuildContext context) async {
-    var result = await SpotifySdk.connectToSpotifyRemote(
+    await SpotifySdk.connectToSpotifyRemote(
         clientId: "ed2803e840844844b3120ab2cc82dcd5",
         redirectUrl: "http://localhost:8888/callback");
     authToken = await SpotifySdk.getAuthenticationToken(
@@ -61,16 +63,53 @@ class FirstScreen extends StatelessWidget {
         scope: 'app-remote-control, '
             'user-modify-playback-state, '
             'playlist-read-private, '
+            'user-top-read, '
             'playlist-modify-public,user-read-currently-playing');
 
+    var res = getUsersTracks();
+    Navigator.pushNamed(context, '/second');
+  }
+
+  Future<void> getUsersTracks() async {
     headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Authorization': 'Bearer $authToken'
     };
+    var getTopSongs = await http.get(
+        'https://api.spotify.com/v1/me/top/tracks?limit=10',
+        headers: headers);
+    var topSongs = jsonDecode(getTopSongs.body);
+    var random = new Random();
+    var seedTracks =
+        topSongs["items"][random.nextInt(topSongs["items"].length)]["id"];
 
-    var res = await http.get('https://api.spotify.com/v1/me', headers: headers);
-    print(res.body);
-    Navigator.pushNamed(context, '/second');
+    var getTopArtists = await http.get(
+        'https://api.spotify.com/v1/me/top/artists?time_range=medium_term&limit=10',
+        headers: headers);
+
+    var topArtists = jsonDecode(getTopArtists.body);
+
+    var seedArtists =
+        topArtists["items"][random.nextInt(topSongs["items"].length)]["id"];
+
+    var genreString = "";
+
+    for (var i = 0; i < 3; i++) {
+      var genreArray = topArtists["items"]
+          [random.nextInt(topSongs["items"].length)]["genres"];
+      genreString = genreString + genreArray[random.nextInt(genreArray.length)];
+      if (i != 2) {
+        genreString = genreString + ",";
+      }
+    }
+
+    var getRecommendations = await http.get(
+        'https://api.spotify.com/v1/recommendations?limit=25&seed_artists=$seedArtists&seed_genres=$genreString&seed_tracks=$seedTracks',
+        headers: headers);
+
+    var results = jsonDecode(getRecommendations.body);
+
+    return results["tracks"];
   }
 }
