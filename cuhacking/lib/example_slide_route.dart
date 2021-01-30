@@ -50,7 +50,7 @@ class _ExampleRouteSlideState extends State<ExampleRouteSlide> {
             else
               // if the deck is complete, add a button to reset deck
               Center(
-                child: FlatButton(
+                child: ElevatedButton(
                   child: Text("Reset deck"),
                   onPressed: () => setState(() => currentCardIndex = 0),
                 ),
@@ -61,12 +61,16 @@ class _ExampleRouteSlideState extends State<ExampleRouteSlide> {
             if (currentCardIndex < cards.length)
               cardControllerRow(_cardController),
             Center(
-              child: FlatButton(
+              child: ElevatedButton(
                 child: Text("Go To Main"),
                 onPressed: () {
                   // Navigate to the second screen using a named route.
                   Navigator.pushNamed(context, '/');
                 },
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.cyan, // background
+                  onPrimary: Colors.white, // foreground
+                ),
               ),
             )
           ],
@@ -102,13 +106,13 @@ class _ExampleRouteSlideState extends State<ExampleRouteSlide> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        FlatButton(
+        ElevatedButton(
           child: Text("Left"),
-          onPressed: () => cardController.triggerSwipeLeft(),
+          onPressed: () => swipeLeft(),
         ),
-        FlatButton(
+        ElevatedButton(
           child: Text("Right"),
-          onPressed: () => cardController.triggerSwipeRight(),
+          onPressed: () => swipeRight(),
         ),
       ],
     );
