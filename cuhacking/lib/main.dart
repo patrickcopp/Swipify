@@ -47,7 +47,7 @@ class FirstScreen extends StatelessWidget {
   Future<void> connectToSpotifyRemote() async {
       var result = await SpotifySdk.connectToSpotifyRemote(
           clientId: "ed2803e840844844b3120ab2cc82dcd5",
-          redirectUrl: "www.google.com");
+          redirectUrl: "http://localhost:8888/callback");
       print(result);
 
   }
