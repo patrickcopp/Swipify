@@ -27,7 +27,7 @@ void main() {
       // When navigating to the "/" route, build the FirstScreen widget.
       '/': (context) => FirstScreen(),
       // When navigating to the "/second" route, build the SecondScreen widget.
-      '/second': (context) => ExampleRouteSlide(),
+      '/second': (context) => SongCardSlide(),
     },
   ));
 }
@@ -70,6 +70,12 @@ class FirstScreen extends StatelessWidget {
 
     var res = await http.get('https://api.spotify.com/v1/me', headers: headers);
     print(res.body);
-    Navigator.pushNamed(context, '/second');
+    Navigator.pushNamed(
+        context,
+        '/second',
+      arguments: {
+        'headers': headers
+      },
+    );
   }
 }
