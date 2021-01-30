@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:swipeable_card/swipeable_card.dart';
 
-import 'card_example.dart';
+import 'song_card.dart';
 
-class ExampleRoute extends StatefulWidget {
-  const ExampleRoute({Key key}) : super(key: key);
+class ExampleRouteSlide extends StatefulWidget {
+  const ExampleRouteSlide({Key key}) : super(key: key);
 
   @override
-  _ExampleRouteState createState() => _ExampleRouteState();
+  _ExampleRouteSlideState createState() => _ExampleRouteSlideState();
 }
 
-class _ExampleRouteState extends State<ExampleRoute> {
-  final List<CardExample> cards = [
-    CardExample(color: Colors.red, text: "First card"),
-    CardExample(color: Colors.blue, text: "Second card"),
-    CardExample(color: Colors.orange),
-    CardExample(color: Colors.indigo),
-    CardExample(color: Colors.green, text: "The next card is the last"),
-    CardExample(color: Colors.purple, text: "This is the last card"),
-  ];
+List<SongCard> init() {
+  List<SongCard> cards = new List<SongCard>();
+  for (int i = 0; i < 5; i++) {
+    cards.add(SongCard(color: Colors.deepPurpleAccent, trackTitle: "$i card"));
+  }
+  return cards;
+}
+
+class _ExampleRouteSlideState extends State<ExampleRouteSlide> {
+  final List<SongCard> cards = init();
   int currentCardIndex = 0;
 
   @override
@@ -30,11 +31,13 @@ class _ExampleRouteState extends State<ExampleRoute> {
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             if (currentCardIndex < cards.length)
-              SwipeableWidget(
-                cardController: _cardController,
-                animationDuration: 500,
-                horizontalThreshold: 0.85,
+              SwipeableWidgetSlide(
+                key: ObjectKey(currentCardIndex),
                 child: cards[currentCardIndex],
+                onLeftSwipe: () => swipeLeft(),
+                onRightSwipe: () => swipeRight(),
+                onTopSwipe: () => swipeTop(),
+                onBottomSwipe: () => swipeBottom(),
                 nextCards: <Widget>[
                   // show next card
                   // if there are no next cards, show nothing
@@ -44,13 +47,11 @@ class _ExampleRouteState extends State<ExampleRoute> {
                       child: cards[currentCardIndex + 1],
                     ),
                 ],
-                onLeftSwipe: () => swipeLeft(),
-                onRightSwipe: () => swipeRight(),
               )
             else
               // if the deck is complete, add a button to reset deck
               Center(
-                child: FlatButton(
+                child: ElevatedButton(
                   child: Text("Reset deck"),
                   onPressed: () => setState(() => currentCardIndex = 0),
                 ),
@@ -60,6 +61,19 @@ class _ExampleRouteState extends State<ExampleRoute> {
             // otherwise, just hide it
             if (currentCardIndex < cards.length)
               cardControllerRow(_cardController),
+            Center(
+              child: ElevatedButton(
+                child: Text("Go To Main"),
+                onPressed: () {
+                  // Navigate to the second screen using a named route.
+                  Navigator.pushNamed(context, '/');
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.cyan, // background
+                  onPrimary: Colors.white, // foreground
+                ),
+              ),
+            )
           ],
         ),
       ),
@@ -70,29 +84,35 @@ class _ExampleRouteState extends State<ExampleRoute> {
     print("left");
 
     // NOTE: it is your job to change the card
-    setState(() {
-      currentCardIndex++;
-    });
+    setState(() => currentCardIndex++);
   }
 
   void swipeRight() {
     print("right");
-    setState(() {
-      currentCardIndex++;
-    });
+    setState(() => currentCardIndex++);
+  }
+
+  void swipeTop() {
+    print("top");
+    setState(() => currentCardIndex++);
+  }
+
+  void swipeBottom() {
+    print("bottom");
+    setState(() => currentCardIndex++);
   }
 
   Widget cardControllerRow(SwipeableWidgetController cardController) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        FlatButton(
+        ElevatedButton(
           child: Text("Left"),
-          onPressed: () => cardController.triggerSwipeLeft(),
+          onPressed: () => swipeLeft(),
         ),
-        FlatButton(
+        ElevatedButton(
           child: Text("Right"),
-          onPressed: () => cardController.triggerSwipeRight(),
+          onPressed: () => swipeRight(),
         ),
       ],
     );

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class CardExample extends StatelessWidget {
-  const CardExample({
+class SongCard extends StatelessWidget {
+  const SongCard({
     Key key,
     this.color = Colors.indigo,
-    this.text = "Card Example",
+    this.trackTitle = "Card Example",
   }) : super(key: key);
   final Color color;
-  final String text;
+  final String trackTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class CardExample extends StatelessWidget {
       ),
 
       child: Text(
-        text,
+        trackTitle,
         style: TextStyle(
           fontSize: 36.0,
           // color: Colors.white,
