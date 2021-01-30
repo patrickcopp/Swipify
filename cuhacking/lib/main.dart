@@ -36,19 +36,17 @@ class FirstScreen extends StatelessWidget {
         child: ElevatedButton(
           child: Text('Launch screen'),
           onPressed: () {
-            connectToSpotifyRemote();
-            //Navigator.pushNamed(context, '/second');
+            connectToSpotifyRemote(context);
           },
         ),
       ),
     );
   }
 
-  Future<void> connectToSpotifyRemote() async {
-      var result = await SpotifySdk.connectToSpotifyRemote(
-          clientId: "ed2803e840844844b3120ab2cc82dcd5",
-          redirectUrl: "http://localhost:8888/callback");
-      print(result);
-
+  Future<void> connectToSpotifyRemote(BuildContext context) async {
+    var result = await SpotifySdk.connectToSpotifyRemote(
+        clientId: "ed2803e840844844b3120ab2cc82dcd5",
+        redirectUrl: "http://localhost:8888/callback");
+    Navigator.pushNamed(context, '/second');
   }
 }
