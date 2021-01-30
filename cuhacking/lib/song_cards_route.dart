@@ -14,13 +14,13 @@ class SongCardSlide extends StatefulWidget {
 List<SongCard> cards;
 
 Future<List<SongCard>> initCards(args) async {
-  List<SongCard> cards = new List<SongCard>();
+  List<SongCard> _cards = new List<SongCard>();
   var res = await http.get('https://api.spotify.com/v1/tracks/60Ctoy2M8nmDaI7Fax3fTL', headers: args['headers']);
   print(res.body);
   for (int i = 0; i < 5; i++) {
-    cards.add(SongCard(color: Colors.deepPurpleAccent, trackTitle: "$i card"));
+    _cards.add(SongCard(color: Colors.deepPurpleAccent, trackTitle: "$i card"));
   }
-  return cards;
+  return _cards;
 }
 
 class _SongCardRouteState extends State<SongCardSlide> {
@@ -29,10 +29,11 @@ class _SongCardRouteState extends State<SongCardSlide> {
   Widget projectWidget(args) {
     return FutureBuilder(
       builder: (context, cardsSnapshot) {
-        if (cardsSnapshot.connectionState == ConnectionState.none &&
-            cardsSnapshot.hasData == null) {
-          //print('project snapshot data is: ${projectSnap.data}');
+        if ((cardsSnapshot.connectionState == ConnectionState.none || cardsSnapshot.connectionState == ConnectionState.waiting) &&
+            cardsSnapshot.data == null) {
           return Container();
+        } else {
+          cards = cardsSnapshot.data;
         }
         return SafeArea(
           child: Column(
