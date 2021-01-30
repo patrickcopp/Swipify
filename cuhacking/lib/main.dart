@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ import 'package:http/http.dart' as http;
 
 var CLIENT_STRING = "ed2803e840844844b3120ab2cc82dcd5";
 var REDIRECT_URL = "http://localhost:8888/callback";
+var USER_ID = "";
 var authToken = "";
 var headers;
 
@@ -61,7 +63,10 @@ class FirstScreen extends StatelessWidget {
         scope: 'app-remote-control, '
             'user-modify-playback-state, '
             'playlist-read-private, '
-            'playlist-modify-public,user-read-currently-playing');
+            'playlist-modify-public,user-read-currently-playing, '
+            'playlist-modify-public, '
+            'playlist-modify-private'
+    );
 
     headers = {
       'Content-Type': 'application/json',
@@ -70,7 +75,32 @@ class FirstScreen extends StatelessWidget {
     };
 
     var res = await http.get('https://api.spotify.com/v1/me', headers: headers);
-    print(res.body);
+
+    bool playlistCreated = await makeNewPlaylist(res.body);
+
     Navigator.pushNamed(context, '/second');
   }
+
+  makeNewPlaylist(String body) async {
+    var parseString = "\"uri\" : \"spotify:user:";
+    if(!body.contains(parseString)) {
+      return false;
+    }
+    var startIndex = body.indexOf(parseString) + parseString.length;
+    var endIndex = body.indexOf("\"", startIndex);
+    USER_ID = body.substring(startIndex,endIndex);
+    var res = await http.get('https://api.spotify.com/v1/me/playlists?limit=50',
+        headers: headers,
+    );
+    if(!res.body.contains("\"name\" : \"cuHackPlaylist\"")) {
+      res = await http.post(
+          'https://api.spotify.com/v1/users/' + USER_ID + '/playlists',
+          headers: headers,
+          body: '{"name": "cuHackPlaylist","description": "Hackerman strikes again.","public": false}'
+      );
+      if(res.statusCode!=201) return false;
+    }
+    return true;
+  }
+
 }
