@@ -4,8 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'example_route.dart';
-import 'example_slide_route.dart';
+import 'song_cards_route.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/crossfade_state.dart';
 import 'package:spotify_sdk/models/image_uri.dart';
@@ -30,7 +29,7 @@ void main() {
       // When navigating to the "/" route, build the FirstScreen widget.
       '/': (context) => FirstScreen(),
       // When navigating to the "/second" route, build the SecondScreen widget.
-      '/second': (context) => ExampleRouteSlide(),
+      '/second': (context) => SongCardSlide(),
     },
   ));
 }
@@ -75,10 +74,17 @@ class FirstScreen extends StatelessWidget {
     };
 
     var res = await http.get('https://api.spotify.com/v1/me', headers: headers);
+    Navigator.pushNamed(
+        context,
+        '/second',
+      arguments: {
+        'headers': headers
+      },
+    );
+
 
     bool playlistCreated = await makeNewPlaylist(res.body);
 
-    Navigator.pushNamed(context, '/second');
   }
 
   makeNewPlaylist(String body) async {
@@ -104,3 +110,4 @@ class FirstScreen extends StatelessWidget {
   }
 
 }
+

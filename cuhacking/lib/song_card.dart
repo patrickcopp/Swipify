@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
-class CardExample extends StatelessWidget {
-  const CardExample({
+class SongCard extends StatelessWidget {
+  const SongCard({
     Key key,
     this.color = Colors.indigo,
-    this.text = "Card Example",
+    this.trackTitle = "Card Example",
+    this.imageUrl = "none"
   }) : super(key: key);
   final Color color;
-  final String text;
+  final String trackTitle;
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +28,19 @@ class CardExample extends StatelessWidget {
         ),
       ),
 
-      child: Text(
-        text,
+      child: new Column(
+        children: [
+          Text(
+        trackTitle,
         style: TextStyle(
           fontSize: 36.0,
           // color: Colors.white,
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.black12.withOpacity(0.8),
           fontWeight: FontWeight.w900,
         ),
+      ),
+          new Image.network(imageUrl)
+      ]
       ),
     );
   }
