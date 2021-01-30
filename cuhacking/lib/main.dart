@@ -10,6 +10,10 @@ import 'package:spotify_sdk/models/player_context.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
+var CLIENT_STRING = "ed2803e840844844b3120ab2cc82dcd5";
+var REDIRECT_URL = "http://localhost:8888/callback";
+var authToken= "";
+
 void main() {
   runApp(MaterialApp(
     title: 'Named Routes Demo',
@@ -48,7 +52,13 @@ class FirstScreen extends StatelessWidget {
       var result = await SpotifySdk.connectToSpotifyRemote(
           clientId: "ed2803e840844844b3120ab2cc82dcd5",
           redirectUrl: "http://localhost:8888/callback");
-      print(result);
+      authToken = await SpotifySdk.getAuthenticationToken(
+          clientId: CLIENT_STRING,
+          redirectUrl: REDIRECT_URL,
+          scope: 'app-remote-control, '
+              'user-modify-playback-state, '
+              'playlist-read-private, '
+              'playlist-modify-public,user-read-currently-playing');
 
   }
 }
