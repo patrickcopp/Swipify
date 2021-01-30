@@ -10,6 +10,10 @@ import 'package:spotify_sdk/models/player_context.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
+var CLIENT_STRING = "ed2803e840844844b3120ab2cc82dcd5";
+var REDIRECT_URL = "http://localhost:8888/callback";
+var authToken = "";
+
 void main() {
   runApp(MaterialApp(
     title: 'Named Routes Demo',
@@ -36,19 +40,24 @@ class FirstScreen extends StatelessWidget {
         child: ElevatedButton(
           child: Text('Launch screen'),
           onPressed: () {
-            connectToSpotifyRemote();
-            //Navigator.pushNamed(context, '/second');
+            connectToSpotifyRemote(context);
           },
         ),
       ),
     );
   }
 
-  Future<void> connectToSpotifyRemote() async {
-      var result = await SpotifySdk.connectToSpotifyRemote(
-          clientId: "ed2803e840844844b3120ab2cc82dcd5",
-          redirectUrl: "www.google.com");
-      print(result);
-
+  Future<void> connectToSpotifyRemote(BuildContext context) async {
+    var result = await SpotifySdk.connectToSpotifyRemote(
+        clientId: "ed2803e840844844b3120ab2cc82dcd5",
+        redirectUrl: "http://localhost:8888/callback");
+    authToken = await SpotifySdk.getAuthenticationToken(
+        clientId: CLIENT_STRING,
+        redirectUrl: REDIRECT_URL,
+        scope: 'app-remote-control, '
+            'user-modify-playback-state, '
+            'playlist-read-private, '
+            'playlist-modify-public,user-read-currently-playing');
+    Navigator.pushNamed(context, '/second');
   }
 }
