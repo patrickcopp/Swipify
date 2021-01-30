@@ -74,7 +74,6 @@ class _ExampleRouteSlideState extends State<ExampleRouteSlide> {
               ),
             )
           ],
-
         ),
       ),
     );
@@ -98,7 +97,7 @@ class _ExampleRouteSlideState extends State<ExampleRouteSlide> {
   }
 
   void swipeBottom() {
-    print("top");
+    print("bottom");
     setState(() => currentCardIndex++);
   }
 
