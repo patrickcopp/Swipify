@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:swipeable_card/swipeable_card.dart';
 import 'package:http/http.dart' as http;
@@ -15,10 +17,10 @@ List<SongCard> cards;
 
 Future<List<SongCard>> initCards(args) async {
   List<SongCard> _cards = new List<SongCard>();
-  var res = await http.get('https://api.spotify.com/v1/tracks/60Ctoy2M8nmDaI7Fax3fTL', headers: args['headers']);
-  print(res.body);
+  var resSong = await http.get('https://api.spotify.com/v1/tracks/60Ctoy2M8nmDaI7Fax3fTL', headers: args['headers']);
+  var song = jsonDecode(resSong.body);
   for (int i = 0; i < 5; i++) {
-    _cards.add(SongCard(color: Colors.deepPurpleAccent, trackTitle: "$i card"));
+    _cards.add(SongCard(color: Colors.white70, trackTitle: song["name"], imageUrl: song["album"]["images"][0]["url"],));
   }
   return _cards;
 }

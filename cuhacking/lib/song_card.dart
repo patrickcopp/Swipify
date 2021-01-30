@@ -5,9 +5,11 @@ class SongCard extends StatelessWidget {
     Key key,
     this.color = Colors.indigo,
     this.trackTitle = "Card Example",
+    this.imageUrl = "none"
   }) : super(key: key);
   final Color color;
   final String trackTitle;
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +28,19 @@ class SongCard extends StatelessWidget {
         ),
       ),
 
-      child: Text(
+      child: new Column(
+        children: [
+          Text(
         trackTitle,
         style: TextStyle(
           fontSize: 36.0,
           // color: Colors.white,
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.black12.withOpacity(0.8),
           fontWeight: FontWeight.w900,
         ),
+      ),
+          new Image.network(imageUrl)
+      ]
       ),
     );
   }
