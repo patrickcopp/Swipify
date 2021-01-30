@@ -64,6 +64,7 @@ class FirstScreen extends StatelessWidget {
             'playlist-read-private, '
             'playlist-modify-public,user-read-currently-playing, '
             'playlist-modify-public, '
+            'user-top-read, '
             'playlist-modify-private'
     );
 
@@ -110,4 +111,3 @@ class FirstScreen extends StatelessWidget {
   }
 
 }
-
