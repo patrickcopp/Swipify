@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -8,10 +10,12 @@ import 'package:spotify_sdk/models/image_uri.dart';
 import 'package:spotify_sdk/models/player_context.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
+import 'package:http/http.dart' as http;
 
 var CLIENT_STRING = "ed2803e840844844b3120ab2cc82dcd5";
 var REDIRECT_URL = "http://localhost:8888/callback";
 var authToken = "";
+var headers;
 
 void main() {
   runApp(MaterialApp(
@@ -57,6 +61,15 @@ class FirstScreen extends StatelessWidget {
             'user-modify-playback-state, '
             'playlist-read-private, '
             'playlist-modify-public,user-read-currently-playing');
+
+    headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $authToken'
+    };
+
+    var res = await http.get('https://api.spotify.com/v1/me', headers: headers);
+    print(res.body);
     Navigator.pushNamed(context, '/second');
   }
 }
