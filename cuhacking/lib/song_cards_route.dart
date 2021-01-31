@@ -34,12 +34,15 @@ Future<List<SongCard>> initCards(args) async {
     for (int i = 0; i < recommendedList.length - 4; i++) {
       var song = recommendedList[i];
       cards.add(SongCard(
-          color: Colors.white70.withOpacity(1),
-          trackTitle: song["name"],
-          imageUrl: song["album"]["images"][0]["url"],
-          URI: song["id"],
-          artist: song["artists"][0]["name"],
-          songJson: song,
+        color: Colors.white70.withOpacity(1),
+        trackTitle: song["name"].length <= 30
+            ? song["name"]
+            : '${song["name"].substring(0, 30)}...',
+        imageUrl: song["album"]["images"][0]["url"],
+        URI: song["id"],
+        artist: song["artists"][0]["name"].length <= 30
+            ? song["artists"][0]["name"]
+            : '$song["artists"][0]["name"].substring(0, 30)}...',
       ));
     }
   }
@@ -48,19 +51,24 @@ Future<List<SongCard>> initCards(args) async {
   }
 
   List<SongCard> _cards = new List<SongCard>();
-  PLAYLIST_ID = args["playlistID"];
-  HEADERS = args["headers"];
+  if (args != null) {
+    PLAYLIST_ID = args["playlistID"];
+    HEADERS = args["headers"];
+  }
   var recommendedList = await getRecommendedTracks(HEADERS);
 
   for (int i = 0; i < recommendedList.length; i++) {
     var song = recommendedList[i];
     _cards.add(SongCard(
-        color: Colors.white70.withOpacity(1),
-        trackTitle: song["name"],
-        imageUrl: song["album"]["images"][0]["url"],
-        URI: song["id"],
-        artist: song["artists"][0]["name"],
-        songJson: song,
+      color: Colors.white70.withOpacity(1),
+      trackTitle: song["name"].length <= 30
+          ? song["name"]
+          : '${song["name"].substring(0, 30)}...',
+      imageUrl: song["album"]["images"][0]["url"],
+      URI: song["id"],
+      artist: song["artists"][0]["name"].length <= 30
+          ? song["artists"][0]["name"]
+          : '$song["artists"][0]["name"].substring(0, 30)}...',
     ));
   }
   return _cards;
@@ -113,7 +121,14 @@ class _SongCardRouteState extends State<SongCardSlide> {
                 // if the deck is complete, add a button to reset deck
                 Center(
                   child: ElevatedButton(
-                    child: Text("Reset deck", style: TextStyle(height: 1, fontSize: 40, color: Color(0xff191414),),),
+                    child: Text(
+                      "Reset deck",
+                      style: TextStyle(
+                        height: 1,
+                        fontSize: 40,
+                        color: Color(0xff191414),
+                      ),
+                    ),
                     onPressed: () {
                       setState(() => currentCardIndex = 0);
                       cards = null;
@@ -138,10 +153,15 @@ class _SongCardRouteState extends State<SongCardSlide> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Swipify', style: GoogleFonts.oswald(textStyle: TextStyle(color: Color(0xff191414), letterSpacing: .5, fontSize: 40),),
+          'Swipify',
+          style: TextStyle(
+              color: Color(0xff191414),
+              fontSize: 40,
+              fontFamily: "Gotham",
+              letterSpacing: -1.5),
         ),
         backgroundColor: Color(0xff1DB954),
-        automaticallyImplyLeading: true,
+        automaticallyImplyLeading: false,
       ),
       body: projectWidget(args),
       backgroundColor: Color(0xff191414),
