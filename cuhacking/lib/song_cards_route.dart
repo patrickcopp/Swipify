@@ -154,13 +154,14 @@ class _SongCardRouteState extends State<SongCardSlide> {
 
   void swipeLeft() {
     print("left");
-
+    pause();
     // NOTE: it is your job to change the card
     setState(() => currentCardIndex++);
   }
 
   Future<void> swipeRight() async {
     print("right");
+    pause();
     var res = http.post(
       'https://api.spotify.com/v1/playlists/' +
           PLAYLIST_ID +
