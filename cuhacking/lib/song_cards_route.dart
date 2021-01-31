@@ -82,9 +82,6 @@ class _SongCardRouteState extends State<SongCardSlide> {
           return Container();
         } else {
           cards = cardsSnapshot.data;
-          if (currentCardIndex < cards.length) {
-            cards[currentCardIndex].play();
-          }
         }
         return SafeArea(
           child: Column(
