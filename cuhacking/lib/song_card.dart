@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class SongCard extends StatelessWidget {
-  const SongCard({
-    Key key,
-    this.color = Colors.indigo,
-    this.trackTitle = "Card Example",
-    this.imageUrl = "none",
-    this.URI = ""
-  }) : super(key: key);
+  const SongCard(
+      {Key key,
+      this.color = Colors.indigo,
+      this.trackTitle = "Card Example",
+      this.imageUrl = "none",
+      this.URI = ""})
+      : super(key: key);
   final Color color;
   final String trackTitle;
   final String imageUrl;
@@ -26,24 +26,22 @@ class SongCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(15.0),
         border: Border.all(
           width: 7.0,
-          color: Colors.transparent.withOpacity(0.3),
+          color: Colors.transparent.withOpacity(1),
         ),
       ),
 
-      child: new Column(
-        children: [
-          Text(
-        trackTitle,
-        style: TextStyle(
-          fontSize: 36.0,
-          // color: Colors.white,
-          color: Colors.black12.withOpacity(0.8),
-          fontWeight: FontWeight.w900,
+      child: new Column(children: [
+        Text(
+          trackTitle,
+          style: TextStyle(
+            fontSize: 18.0,
+            // color: Colors.white,
+            color: Colors.black12.withOpacity(0.8),
+            fontWeight: FontWeight.w900,
+          ),
         ),
-      ),
-          new Image.network(imageUrl)
-      ]
-      ),
+        new Image.network(imageUrl)
+      ]),
     );
   }
 }

@@ -13,11 +13,16 @@ class SongCardSlide extends StatefulWidget {
   _SongCardRouteState createState() => _SongCardRouteState();
 }
 
-List<SongCard> cards;
 var PLAYLIST_ID = "";
 var HEADERS;
+List<SongCard> cards = null;
+var args;
 
 Future<List<SongCard>> initCards(args) async {
+  if (cards != null && cards.length != 0) {
+    return cards;
+  }
+
   List<SongCard> _cards = new List<SongCard>();
   PLAYLIST_ID = args["playlistID"];
   HEADERS = args["headers"];
@@ -25,17 +30,22 @@ Future<List<SongCard>> initCards(args) async {
 
   for (int i = 0; i < recommendedList.length; i++) {
     _cards.add(SongCard(
-      color: Colors.white70,
-      trackTitle: recommendedList[i]["name"],
-      imageUrl: recommendedList[i]["album"]["images"][0]["url"],
-      URI: recommendedList[i]["id"]
-    ));
+        color: Colors.white70.withOpacity(1),
+        trackTitle: recommendedList[i]["name"],
+        imageUrl: recommendedList[i]["album"]["images"][0]["url"],
+        URI: recommendedList[i]["id"]));
   }
   return _cards;
 }
 
 class _SongCardRouteState extends State<SongCardSlide> {
   int currentCardIndex = 0;
+  Future initCardList;
+  @override
+  void initState() {
+    initCardList = initCards(args);
+  }
+
   SwipeableWidgetController _cardController = SwipeableWidgetController();
   Widget projectWidget(args) {
     return FutureBuilder(
@@ -74,7 +84,10 @@ class _SongCardRouteState extends State<SongCardSlide> {
                 Center(
                   child: ElevatedButton(
                     child: Text("Reset deck"),
-                    onPressed: () => setState(() => currentCardIndex = 0),
+                    onPressed: () {
+                      setState(() => currentCardIndex = 0);
+                      cards = null;
+                    },
                   ),
                 ),
 
@@ -105,7 +118,7 @@ class _SongCardRouteState extends State<SongCardSlide> {
 
   @override
   Widget build(BuildContext context) {
-    var args = ModalRoute.of(context).settings.arguments;
+    args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
         title: Text('Songs'),
@@ -125,8 +138,11 @@ class _SongCardRouteState extends State<SongCardSlide> {
     print("right");
     setState(() => currentCardIndex++);
     var res = http.post(
-        'https://api.spotify.com/v1/playlists/' + PLAYLIST_ID + '/tracks?uris=spotify:track:'+cards[0].URI,
-        headers: HEADERS,
+      'https://api.spotify.com/v1/playlists/' +
+          PLAYLIST_ID +
+          '/tracks?uris=spotify:track:' +
+          cards[0].URI,
+      headers: HEADERS,
     );
   }
 
