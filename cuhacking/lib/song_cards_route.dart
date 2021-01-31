@@ -44,8 +44,10 @@ Future<List<SongCard>> initCards(args) async {
   }
 
   List<SongCard> _cards = new List<SongCard>();
-  PLAYLIST_ID = args["playlistID"];
-  HEADERS = args["headers"];
+  if(args!=null){
+    PLAYLIST_ID = args["playlistID"];
+    HEADERS = args["headers"];
+  }
   var recommendedList = await getRecommendedTracks(HEADERS);
 
   for (int i = 0; i < recommendedList.length; i++) {
