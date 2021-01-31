@@ -20,7 +20,11 @@ class SongCard extends StatefulWidget {
 class _SongCardState extends State<SongCard> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      onTap: (){
+        print("Container clicked");
+      },
+      child: new Container(
       height: 450,
       width: 320,
 
@@ -47,6 +51,7 @@ class _SongCardState extends State<SongCard> {
         ),
         new Image.network(this.widget.imageUrl)
       ]),
+      ),
     );
   }
 }
