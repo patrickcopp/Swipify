@@ -35,7 +35,7 @@ class _SongCardState extends State<SongCard> {
   @override
   Widget build(BuildContext context) {
     this.play();
-    return GestureDetector(
+    return InkWell(
       onTap: (){
         this.PAUSED ? resume() : pause();
         this.PAUSED =! this.PAUSED;
@@ -53,8 +53,7 @@ class _SongCardState extends State<SongCard> {
     Duration songDuration = Duration(milliseconds: json['duration_ms']);
     String explicit = json['explicit'] ? "explicit" : "not explicit";
     return {
-      "duration": songDuration.toString(),
-      "explicit": explicit
+      "duration": songDuration.toString().substring(0,songDuration.toString().indexOf('.'))
     };
   }
 
