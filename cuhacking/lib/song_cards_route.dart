@@ -32,16 +32,17 @@ Future<List<SongCard>> initCards(args) async {
     var recommendedList = await getRecommendedTracks(HEADERS);
 
     for (int i = 0; i < recommendedList.length - 4; i++) {
+      var song = recommendedList[i];
       cards.add(SongCard(
         color: Colors.white70.withOpacity(1),
-        trackTitle: recommendedList[i]["name"].length <= 30
-            ? recommendedList[i]["name"]
-            : '${recommendedList[i]["name"].substring(0, 30)}...',
-        imageUrl: recommendedList[i]["album"]["images"][0]["url"],
-        URI: recommendedList[i]["id"],
-        artist: recommendedList[i]["artists"][0]["name"].length <= 30
-            ? recommendedList[i]["artists"][0]["name"]
-            : '$recommendedList[i]["artists"][0]["name"].substring(0, 30)}...',
+        trackTitle: song["name"].length <= 30
+            ? song["name"]
+            : '${song["name"].substring(0, 30)}...',
+        imageUrl: song["album"]["images"][0]["url"],
+        URI: song["id"],
+        artist: song["artists"][0]["name"].length <= 30
+            ? song["artists"][0]["name"]
+            : '$song["artists"][0]["name"].substring(0, 30)}...',
       ));
     }
   }
@@ -50,23 +51,24 @@ Future<List<SongCard>> initCards(args) async {
   }
 
   List<SongCard> _cards = new List<SongCard>();
-  if(args!=null){
+  if (args != null) {
     PLAYLIST_ID = args["playlistID"];
     HEADERS = args["headers"];
   }
   var recommendedList = await getRecommendedTracks(HEADERS);
 
   for (int i = 0; i < recommendedList.length; i++) {
+    var song = recommendedList[i];
     _cards.add(SongCard(
       color: Colors.white70.withOpacity(1),
-      trackTitle: recommendedList[i]["name"].length <= 30
-          ? recommendedList[i]["name"]
-          : '${recommendedList[i]["name"].substring(0, 30)}...',
-      imageUrl: recommendedList[i]["album"]["images"][0]["url"],
-      URI: recommendedList[i]["id"],
-      artist: recommendedList[i]["artists"][0]["name"].length <= 30
-          ? recommendedList[i]["artists"][0]["name"]
-          : '$recommendedList[i]["artists"][0]["name"].substring(0, 30)}...',
+      trackTitle: song["name"].length <= 30
+          ? song["name"]
+          : '${song["name"].substring(0, 30)}...',
+      imageUrl: song["album"]["images"][0]["url"],
+      URI: song["id"],
+      artist: song["artists"][0]["name"].length <= 30
+          ? song["artists"][0]["name"]
+          : '$song["artists"][0]["name"].substring(0, 30)}...',
     ));
   }
   return _cards;
@@ -151,7 +153,12 @@ class _SongCardRouteState extends State<SongCardSlide> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Swipify', style: TextStyle(color: Color(0xff191414), fontSize: 40, fontFamily: "Gotham", letterSpacing: -1.5),
+          'Swipify',
+          style: TextStyle(
+              color: Color(0xff191414),
+              fontSize: 40,
+              fontFamily: "Gotham",
+              letterSpacing: -1.5),
         ),
         backgroundColor: Color(0xff1DB954),
         automaticallyImplyLeading: false,
