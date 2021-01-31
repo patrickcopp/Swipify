@@ -5,11 +5,13 @@ class SongCard extends StatelessWidget {
     Key key,
     this.color = Colors.indigo,
     this.trackTitle = "Card Example",
-    this.imageUrl = "none"
+    this.imageUrl = "none",
+    this.songUri = "song"
   }) : super(key: key);
   final Color color;
   final String trackTitle;
   final String imageUrl;
+  final String songUri;
 
   @override
   Widget build(BuildContext context) {
