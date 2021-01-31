@@ -107,9 +107,13 @@ class FirstScreen extends StatelessWidget {
           body: '{"name": "cuHackPlaylist","description": "Hackerman strikes again.","public": false}'
       );
       if(res.statusCode!=201) return false;
+      return jsonDecode(res.body)["id"];
     }
-    return jsonDecode(res.body)["id"];
+    else{
+      return jsonDecode(res.body)["items"].firstWhere((entry) {
+        return entry["name"] == "cuHackPlaylist";
+      })["id"];
+    }
   }
-
 }
 
