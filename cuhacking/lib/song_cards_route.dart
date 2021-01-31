@@ -127,23 +127,27 @@ class _SongCardRouteState extends State<SongCardSlide> {
                 // if the deck is complete, add a button to reset deck
                 Center(
                   child: ElevatedButton(
-                    child: Text("Reset deck"),
+                    child: Text("Reset deck", style: TextStyle(height: 1, fontSize: 40, color: Color(0xff191414),),),
                     onPressed: () {
                       setState(() => currentCardIndex = 0);
                       cards = null;
                     },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xff1DB954), // background
+                      onPrimary: Color(0xff191414), // foreground
+                    ),
                   ),
                 ),
               Center(
                 child: ElevatedButton(
-                  child: Text("Play/Pause"),
+                  child: Text("Play/Pause", style: TextStyle(height: 1.25, fontSize: 40, color: Color(0xff191414),),),
                   onPressed: () {
                     PAUSED ? resume():pause();
                     PAUSED = !PAUSED;
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.cyan, // background
-                    onPrimary: Colors.white, // foreground
+                    primary: Color(0xff1DB954), // background
+                    onPrimary: Color(0xff191414), // foreground
                   ),
                 ),
               )
@@ -160,10 +164,12 @@ class _SongCardRouteState extends State<SongCardSlide> {
     args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Songs'),
+        title: Text('Sonder', style: TextStyle(height: 1, fontSize: 40, color: Color(0xff191414),),),
+        backgroundColor: Color(0xff1DB954),
         automaticallyImplyLeading: true,
       ),
       body: projectWidget(args),
+      backgroundColor: Color(0xff191414),
     );
   }
 
