@@ -171,14 +171,4 @@ class _SongCardRouteState extends State<SongCardSlide> {
     );
     setState(() => currentCardIndex++);
   }
-
-  void swipeTop() {
-    print("top");
-    setState(() => currentCardIndex++);
-  }
-
-  void swipeBottom() {
-    print("bottom");
-    setState(() => currentCardIndex++);
-  }
 }
