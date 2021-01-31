@@ -14,17 +14,21 @@ class SongCardSlide extends StatefulWidget {
 }
 
 List<SongCard> cards;
+var PLAYLIST_ID = "";
+var HEADERS;
 
 Future<List<SongCard>> initCards(args) async {
   List<SongCard> _cards = new List<SongCard>();
-
-  var recommendedList = await getRecommendedTracks(args['headers']);
+  PLAYLIST_ID = args["playlistID"];
+  HEADERS = args["headers"];
+  var recommendedList = await getRecommendedTracks(HEADERS);
 
   for (int i = 0; i < recommendedList.length; i++) {
     _cards.add(SongCard(
       color: Colors.white70,
       trackTitle: recommendedList[i]["name"],
       imageUrl: recommendedList[i]["album"]["images"][0]["url"],
+      URI: recommendedList[i]["id"]
     ));
   }
   return _cards;
@@ -117,9 +121,13 @@ class _SongCardRouteState extends State<SongCardSlide> {
     setState(() => currentCardIndex++);
   }
 
-  void swipeRight() {
+  Future<void> swipeRight() async {
     print("right");
     setState(() => currentCardIndex++);
+    var res = http.post(
+        'https://api.spotify.com/v1/playlists/' + PLAYLIST_ID + '/tracks?uris=spotify:track:'+cards[0].URI,
+        headers: HEADERS,
+    );
   }
 
   void swipeTop() {

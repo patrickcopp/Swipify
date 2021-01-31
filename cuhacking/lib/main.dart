@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -75,17 +76,17 @@ class FirstScreen extends StatelessWidget {
     };
 
     var res = await http.get('https://api.spotify.com/v1/me', headers: headers);
+    var playlistCreated = await makeNewPlaylist(res.body);
+
+
     Navigator.pushNamed(
         context,
         '/second',
       arguments: {
-        'headers': headers
+        'headers': headers,
+        'playlistID': playlistCreated
       },
     );
-
-
-    bool playlistCreated = await makeNewPlaylist(res.body);
-
   }
 
   makeNewPlaylist(String body) async {
@@ -106,8 +107,13 @@ class FirstScreen extends StatelessWidget {
           body: '{"name": "cuHackPlaylist","description": "Hackerman strikes again.","public": false}'
       );
       if(res.statusCode!=201) return false;
+      return jsonDecode(res.body)["id"];
     }
-    return true;
+    else{
+      return jsonDecode(res.body)["items"].firstWhere((entry) {
+        return entry["name"] == "cuHackPlaylist";
+      })["id"];
+    }
   }
-
 }
+
