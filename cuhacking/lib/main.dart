@@ -14,7 +14,11 @@ var headers;
 
 void main() {
   runApp(MaterialApp(
-    title: 'Named Routes Demo',
+    title: 'Sonder',
+    theme: ThemeData(
+        brightness: Brightness.dark,
+        primaryColor: Color(0xff191414),
+    ),
     // Start the app with the "/" named route. In this case, the app starts
     // on the FirstScreen widget.
     initialRoute: '/',
@@ -32,16 +36,30 @@ class FirstScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('First Screen'),
+        title: Text('Sonder', style: TextStyle(height: 1, fontSize: 40, color: Color(0xff191414),),),
+        backgroundColor: Color(0xff1DB954),
       ),
       body: Center(
         child: ElevatedButton(
-          child: Text('Launch screen'),
+          child: Text(
+              'Play',
+            style: TextStyle(height: 1.25, fontSize: 50, color: Color(0xff191414),),
+          ),
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                    (Set<MaterialState> states) {
+                  if (states.contains(MaterialState.pressed))
+                    return Colors.greenAccent[400];
+                  return Color(0xff1DB954); // Use the component's default.
+                },
+              ),
+          ),
           onPressed: () {
             connectToSpotifyRemote(context);
           },
         ),
       ),
+      backgroundColor: Color(0xff191414),
     );
   }
 
