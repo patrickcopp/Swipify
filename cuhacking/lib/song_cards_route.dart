@@ -141,7 +141,7 @@ class _SongCardRouteState extends State<SongCardSlide> {
       'https://api.spotify.com/v1/playlists/' +
           PLAYLIST_ID +
           '/tracks?uris=spotify:track:' +
-          cards[0].URI,
+          cards[currentCardIndex].URI,
       headers: HEADERS,
     );
   }
