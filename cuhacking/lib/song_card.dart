@@ -6,12 +6,14 @@ class SongCard extends StatelessWidget {
       this.color = Colors.indigo,
       this.trackTitle = "Card Example",
       this.imageUrl = "none",
-      this.URI = ""})
+      this.URI = "",
+      this.artist = ""})
       : super(key: key);
   final Color color;
   final String trackTitle;
   final String imageUrl;
   final String URI;
+  final String artist;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,16 @@ class SongCard extends StatelessWidget {
             fontWeight: FontWeight.w900,
           ),
         ),
-        new Image.network(imageUrl)
+        new Image.network(imageUrl),
+        Text(
+          artist,
+          style: TextStyle(
+            fontSize: 18.0,
+            // color: Colors.white,
+            color: Colors.black12.withOpacity(0.8),
+            fontWeight: FontWeight.w900,
+          ),
+        ),
       ]),
     );
   }

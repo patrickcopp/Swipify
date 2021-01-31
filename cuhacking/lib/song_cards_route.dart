@@ -15,6 +15,7 @@ class SongCardSlide extends StatefulWidget {
   _SongCardRouteState createState() => _SongCardRouteState();
 }
 
+var PAUSED = false;
 var PLAYLIST_ID = "";
 var HEADERS;
 List<SongCard> cards = null;
@@ -36,7 +37,9 @@ Future<List<SongCard>> initCards(args) async {
         color: Colors.white70.withOpacity(1),
         trackTitle: recommendedList[i]["name"],
         imageUrl: recommendedList[i]["album"]["images"][0]["url"],
-        URI: recommendedList[i]["id"]));
+        URI: recommendedList[i]["id"],
+        artist: recommendedList[i]["artists"][0]["name"],
+    ));
   }
   return _cards;
 }
@@ -61,7 +64,16 @@ Future<void> play(songUri) async {
 Future<void> pause() async {
   try {
     await SpotifySdk.pause();
-    currentSong = "";
+  } on PlatformException catch (e) {
+    setStatus(e.code, message: e.message);
+  } on MissingPluginException {
+    setStatus('not implemented');
+  }
+}
+
+Future<void> resume() async {
+  try {
+    await SpotifySdk.resume();
   } on PlatformException catch (e) {
     setStatus(e.code, message: e.message);
   } on MissingPluginException {
@@ -126,8 +138,8 @@ class _SongCardRouteState extends State<SongCardSlide> {
                 child: ElevatedButton(
                   child: Text("Play/Pause"),
                   onPressed: () {
-                    String uri = cards[currentCardIndex].URI;
-                    currentSong == uri ? pause() : play(uri);
+                    PAUSED ? resume():pause();
+                    PAUSED = !PAUSED;
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.cyan, // background
