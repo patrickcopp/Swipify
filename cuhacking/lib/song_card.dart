@@ -1,8 +1,12 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
+const NORMAL_HEIGHT = 400.0;
+const LONG_HEIGHT = 600.0;
 
 class SongCard extends StatefulWidget {
   const SongCard(
@@ -11,13 +15,15 @@ class SongCard extends StatefulWidget {
   this.trackTitle = "Card Example",
   this.imageUrl = "none",
   this.URI = "",
-  this.artist=""})
+  this.artist="",
+  this.songJson=""})
   : super(key: key);
   final Color color;
   final String trackTitle;
   final String imageUrl;
   final String URI;
   final String artist;
+  final songJson;
 
   @override
   _SongCardState createState() => _SongCardState();
@@ -25,16 +31,37 @@ class SongCard extends StatefulWidget {
 
 class _SongCardState extends State<SongCard> {
   var PAUSED = false;
+  var isInfoCard = false;
   @override
   Widget build(BuildContext context) {
     this.play();
     return GestureDetector(
       onTap: (){
-        this.PAUSED ? resume():pause();
+        this.PAUSED ? resume() : pause();
         this.PAUSED =! this.PAUSED;
       },
-      child: new Container(
-      height: 400,
+      onLongPress: () {
+        setState(() {
+          isInfoCard = !isInfoCard;
+        });
+      },
+      child: buildCard(isInfoCard)
+    );
+  }
+
+  Map<String, String> getAdditionalInformation(json) {
+    Duration songDuration = Duration(milliseconds: json['duration_ms']);
+    String explicit = json['explicit'] ? "explicit" : "not explicit";
+    return {
+      "duration": songDuration.toString(),
+      "explicit": explicit
+    };
+  }
+
+  Container buildCard(isInfoCard) {
+    var additionalInfo = getAdditionalInformation(this.widget.songJson);
+    return Container(
+      height: isInfoCard ? LONG_HEIGHT : NORMAL_HEIGHT,
       width: 320,
 
       // Warning: hard-coding values like this is a bad practice
@@ -48,20 +75,40 @@ class _SongCardState extends State<SongCard> {
         ),
       ),
 
-      child: new Column(children: [
-        Text(
-            this.widget.trackTitle, style: GoogleFonts.oswald(textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 23),),
-        ),
-        new Padding(padding: EdgeInsets.only(top: 3),),
-        new Image.network(this.widget.imageUrl),
-        new Padding(padding: EdgeInsets.only(top: 3),),
-        Text(
-          this.widget.artist, style: GoogleFonts.oswald(textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
-        ),
+      child: new Column(
+          children: [
+            Text(
+              this.widget.trackTitle, style: GoogleFonts.oswald(textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 23),),
+            ),
+            new Padding(padding: EdgeInsets.only(top: 3),),
+            new Image.network(this.widget.imageUrl),
+            new Padding(padding: EdgeInsets.only(top: 3),),
+            Text(
+              this.widget.artist, style: GoogleFonts.oswald(textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
+            ),
+            if(isInfoCard)
+              Text(this.widget.songJson["album"]["name"],
+                textAlign: TextAlign.center,
+                style: GoogleFonts.oswald(
+                  textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
+              ),
+            if(isInfoCard)
+              Row(children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(30.0),
+                  child: Text(
+                    additionalInfo['duration'] + ", " + additionalInfo['explicit'],
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.oswald(
+                      textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
+                  ),
+                ),
+              ]),
       ]),
-      ),
     );
   }
+
+
   Future<void> pause() async {
     try {
       await SpotifySdk.pause();
