@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:spotify_sdk/spotify_sdk.dart';
+
 
 class SongCard extends StatelessWidget {
-  const SongCard(
+   SongCard(
       {Key key,
       this.color = Colors.indigo,
       this.trackTitle = "Card Example",
@@ -14,7 +17,7 @@ class SongCard extends StatelessWidget {
   final String imageUrl;
   final String URI;
   final String artist;
-
+  var PAUSED = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -52,7 +55,38 @@ class SongCard extends StatelessWidget {
             fontWeight: FontWeight.w900,
           ),
         ),
+        Center(
+          child: ElevatedButton(
+            child: Text("Pause", style: TextStyle(height: 1.25, fontSize: 25, color: Color(0xff191414),),),
+            onPressed: () {
+              PAUSED ? resume():pause();
+              PAUSED = !PAUSED;
+            },
+            style: ElevatedButton.styleFrom(
+              primary: Color(0xff1DB954), // background
+              onPrimary: Color(0xff191414), // foreground
+            ),
+          ),
+        )
       ]),
     );
   }
+  Future<void> pause() async {
+    try {
+      await SpotifySdk.pause();
+    } on PlatformException catch (e) {
+      print("FUCK: " + e.code + " " + e.message);
+    } on MissingPluginException {
+      print('not implemented');
+    }
+  }
+
+  Future<void> resume() async {
+    await SpotifySdk.resume();
+  }
+  Future<void> play() async {
+    var _uri = "spotify:track:" + this.URI;
+    await SpotifySdk.play(spotifyUri: _uri);
+  }
 }
+

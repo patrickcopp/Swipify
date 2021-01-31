@@ -15,7 +15,6 @@ class SongCardSlide extends StatefulWidget {
   _SongCardRouteState createState() => _SongCardRouteState();
 }
 
-var PAUSED = false;
 var PLAYLIST_ID = "";
 var HEADERS;
 List<SongCard> cards = null;
@@ -49,38 +48,6 @@ void setStatus(String code, {String message = ''}) {
   print('$code$text');
 }
 
-Future<void> play(songUri) async {
-  currentSong = songUri;
-  var _uri = "spotify:track:" + songUri;
-  try {
-    await SpotifySdk.play(spotifyUri: _uri);
-  } on PlatformException catch (e) {
-    setStatus(e.code, message: e.message);
-  } on MissingPluginException {
-    setStatus('not implemented');
-  }
-}
-
-Future<void> pause() async {
-  try {
-    await SpotifySdk.pause();
-  } on PlatformException catch (e) {
-    setStatus(e.code, message: e.message);
-  } on MissingPluginException {
-    setStatus('not implemented');
-  }
-}
-
-Future<void> resume() async {
-  try {
-    await SpotifySdk.resume();
-  } on PlatformException catch (e) {
-    setStatus(e.code, message: e.message);
-  } on MissingPluginException {
-    setStatus('not implemented');
-  }
-}
-
 class _SongCardRouteState extends State<SongCardSlide> {
   int currentCardIndex = 0;
   Future initCardList;
@@ -100,7 +67,7 @@ class _SongCardRouteState extends State<SongCardSlide> {
         } else {
           cards = cardsSnapshot.data;
           if (currentCardIndex < cards.length) {
-            play(cards[currentCardIndex].URI);
+            cards[currentCardIndex].play();
           }
         }
         return SafeArea(
@@ -138,19 +105,6 @@ class _SongCardRouteState extends State<SongCardSlide> {
                     ),
                   ),
                 ),
-              Center(
-                child: ElevatedButton(
-                  child: Text("Play/Pause", style: TextStyle(height: 1.25, fontSize: 40, color: Color(0xff191414),),),
-                  onPressed: () {
-                    PAUSED ? resume():pause();
-                    PAUSED = !PAUSED;
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Color(0xff1DB954), // background
-                    onPrimary: Color(0xff191414), // foreground
-                  ),
-                ),
-              )
             ],
           ),
         );
@@ -175,14 +129,12 @@ class _SongCardRouteState extends State<SongCardSlide> {
 
   void swipeLeft() {
     print("left");
-    pause();
     // NOTE: it is your job to change the card
     setState(() => currentCardIndex++);
   }
 
   Future<void> swipeRight() async {
     print("right");
-    pause();
     var res = http.post(
       'https://api.spotify.com/v1/playlists/' +
           PLAYLIST_ID +
