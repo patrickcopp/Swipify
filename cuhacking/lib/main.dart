@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -74,16 +75,20 @@ class FirstScreen extends StatelessWidget {
     };
 
     var res = await http.get('https://api.spotify.com/v1/me', headers: headers);
+    var playlistCreated = await makeNewPlaylist(res.body);
+
+
     Navigator.pushNamed(
         context,
         '/second',
       arguments: {
-        'headers': headers
+        'headers': headers,
+        'playlistID': playlistCreated
       },
     );
 
 
-    bool playlistCreated = await makeNewPlaylist(res.body);
+
 
   }
 
@@ -106,7 +111,7 @@ class FirstScreen extends StatelessWidget {
       );
       if(res.statusCode!=201) return false;
     }
-    return true;
+    return jsonDecode(res.body)["id"];
   }
 
 }

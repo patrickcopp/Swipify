@@ -14,9 +14,11 @@ class SongCardSlide extends StatefulWidget {
 }
 
 List<SongCard> cards;
+var PLAYLIST_ID = "";
 
 Future<List<SongCard>> initCards(args) async {
   List<SongCard> _cards = new List<SongCard>();
+  PLAYLIST_ID = args['playlistID'];
   var resSong = await http.get('https://api.spotify.com/v1/tracks/60Ctoy2M8nmDaI7Fax3fTL', headers: args['headers']);
   var song = jsonDecode(resSong.body);
   for (int i = 0; i < 5; i++) {
