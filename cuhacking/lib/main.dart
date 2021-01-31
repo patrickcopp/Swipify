@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'song_cards_route.dart';
@@ -39,29 +41,17 @@ class FirstScreen extends StatelessWidget {
       appBar: AppBar(
         title: //Text('Swipify', style: GoogleFonts.lato(TextStyle(height: 1, fontSize: 40, color: Color(0xff191414))),),
         Text(
-          'Swipify', style: GoogleFonts.oswald(textStyle: TextStyle(color: Color(0xff191414), letterSpacing: .5, fontSize: 40),),
+          'Swipify', style: TextStyle(color: Color(0xff191414), fontSize: 40, fontFamily: "Gotham", letterSpacing: -1.5),
         ),
         backgroundColor: Color(0xff1DB954),
       ),
-      body: Center(
-        child: ElevatedButton(
-          child: Text(
-              'Play',
-            style: TextStyle(height: 1.25, fontSize: 50, color: Color(0xff191414),),
-          ),
-          style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                    (Set<MaterialState> states) {
-                  if (states.contains(MaterialState.pressed))
-                    return Colors.greenAccent[400];
-                  return Color(0xff1DB954); // Use the component's default.
-                },
-              ),
-          ),
-          onPressed: () {
-            connectToSpotifyRemote(context);
-          },
-        ),
+      body: Column(children: <Widget>[
+        new Padding(padding: EdgeInsets.only(top: 300),),
+        GestureDetector(
+            onTap: () => connectToSpotifyRemote(context),
+            child: Image.asset('assets/loginbutton.png')
+        )
+      ]
       ),
       backgroundColor: Color(0xff191414),
     );
