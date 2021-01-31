@@ -93,13 +93,11 @@ class _SongCardRouteState extends State<SongCardSlide> {
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               if (currentCardIndex < cards.length)
-                SwipeableWidgetSlide(
+                SwipeableWidget(
                   key: ObjectKey(currentCardIndex),
                   child: cards[currentCardIndex],
                   onLeftSwipe: () => swipeLeft(),
                   onRightSwipe: () => swipeRight(),
-                  onTopSwipe: () => swipeTop(),
-                  onBottomSwipe: () => swipeBottom(),
                   nextCards: <Widget>[
                     // show next card
                     // if there are no next cards, show nothing
