@@ -16,7 +16,7 @@ class SongCard extends StatefulWidget {
   this.imageUrl = "none",
   this.URI = "",
   this.artist="",
-  this.songJson=""})
+  this.songJson=null})
   : super(key: key);
   final Color color;
   final String trackTitle;
@@ -107,6 +107,7 @@ class _SongCardState extends State<SongCard> {
       ]),
     );
   }
+
 
 
   Future<void> pause() async {
