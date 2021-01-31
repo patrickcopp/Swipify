@@ -1,16 +1,8 @@
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'song_cards_route.dart';
-import 'package:spotify_sdk/models/connection_status.dart';
-import 'package:spotify_sdk/models/crossfade_state.dart';
-import 'package:spotify_sdk/models/image_uri.dart';
-import 'package:spotify_sdk/models/player_context.dart';
-import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:http/http.dart' as http;
 
@@ -66,8 +58,7 @@ class FirstScreen extends StatelessWidget {
             'playlist-modify-public,user-read-currently-playing, '
             'playlist-modify-public, '
             'user-top-read, '
-            'playlist-modify-private'
-    );
+            'playlist-modify-private');
 
     headers = {
       'Content-Type': 'application/json',
@@ -78,42 +69,37 @@ class FirstScreen extends StatelessWidget {
     var res = await http.get('https://api.spotify.com/v1/me', headers: headers);
     var playlistCreated = await makeNewPlaylist(res.body);
 
-
     Navigator.pushNamed(
-        context,
-        '/second',
-      arguments: {
-        'headers': headers,
-        'playlistID': playlistCreated
-      },
+      context,
+      '/second',
+      arguments: {'headers': headers, 'playlistID': playlistCreated},
     );
   }
 
   makeNewPlaylist(String body) async {
     var parseString = "\"uri\" : \"spotify:user:";
-    if(!body.contains(parseString)) {
+    if (!body.contains(parseString)) {
       return false;
     }
     var startIndex = body.indexOf(parseString) + parseString.length;
     var endIndex = body.indexOf("\"", startIndex);
-    USER_ID = body.substring(startIndex,endIndex);
-    var res = await http.get('https://api.spotify.com/v1/me/playlists?limit=50',
-        headers: headers,
+    USER_ID = body.substring(startIndex, endIndex);
+    var res = await http.get(
+      'https://api.spotify.com/v1/me/playlists?limit=50',
+      headers: headers,
     );
-    if(!res.body.contains("\"name\" : \"cuHackPlaylist\"")) {
+    if (!res.body.contains("\"name\" : \"cuHackPlaylist\"")) {
       res = await http.post(
           'https://api.spotify.com/v1/users/' + USER_ID + '/playlists',
           headers: headers,
-          body: '{"name": "cuHackPlaylist","description": "Hackerman strikes again.","public": false}'
-      );
-      if(res.statusCode!=201) return false;
+          body:
+              '{"name": "cuHackPlaylist","description": "Hackerman strikes again.","public": false}');
+      if (res.statusCode != 201) return false;
       return jsonDecode(res.body)["id"];
-    }
-    else{
+    } else {
       return jsonDecode(res.body)["items"].firstWhere((entry) {
         return entry["name"] == "cuHackPlaylist";
       })["id"];
     }
   }
 }
-

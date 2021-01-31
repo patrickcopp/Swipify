@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:swipeable_card/swipeable_card.dart';
 import 'package:http/http.dart' as http;
 import 'recommendations.dart';
@@ -17,6 +19,7 @@ var PLAYLIST_ID = "";
 var HEADERS;
 List<SongCard> cards = null;
 var args;
+String currentSong;
 
 Future<List<SongCard>> initCards(args) async {
   if (cards != null && cards.length != 0) {
@@ -36,6 +39,34 @@ Future<List<SongCard>> initCards(args) async {
         URI: recommendedList[i]["id"]));
   }
   return _cards;
+}
+
+void setStatus(String code, {String message = ''}) {
+  var text = message.isEmpty ? '' : ' : $message';
+  print('$code$text');
+}
+
+Future<void> play(songUri) async {
+  currentSong = songUri;
+  var _uri = "spotify:track:" + songUri;
+  try {
+    await SpotifySdk.play(spotifyUri: _uri);
+  } on PlatformException catch (e) {
+    setStatus(e.code, message: e.message);
+  } on MissingPluginException {
+    setStatus('not implemented');
+  }
+}
+
+Future<void> pause() async {
+  try {
+    await SpotifySdk.pause();
+    currentSong = "";
+  } on PlatformException catch (e) {
+    setStatus(e.code, message: e.message);
+  } on MissingPluginException {
+    setStatus('not implemented');
+  }
 }
 
 class _SongCardRouteState extends State<SongCardSlide> {
@@ -90,17 +121,12 @@ class _SongCardRouteState extends State<SongCardSlide> {
                     },
                   ),
                 ),
-
-              // only show the card controlling buttons when there are cards
-              // otherwise, just hide it
-              if (currentCardIndex < cards.length)
-                cardControllerRow(_cardController),
               Center(
                 child: ElevatedButton(
-                  child: Text("Go To Main"),
+                  child: Text("Play/Pause"),
                   onPressed: () {
-                    // Navigate to the second screen using a named route.
-                    Navigator.pushNamed(context, '/');
+                    String uri = cards[currentCardIndex].URI;
+                    currentSong == uri ? pause() : play(uri);
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.cyan, // background
@@ -122,6 +148,7 @@ class _SongCardRouteState extends State<SongCardSlide> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Songs'),
+        automaticallyImplyLeading: true,
       ),
       body: projectWidget(args),
     );
@@ -136,7 +163,6 @@ class _SongCardRouteState extends State<SongCardSlide> {
 
   Future<void> swipeRight() async {
     print("right");
-    setState(() => currentCardIndex++);
     var res = http.post(
       'https://api.spotify.com/v1/playlists/' +
           PLAYLIST_ID +
@@ -144,6 +170,7 @@ class _SongCardRouteState extends State<SongCardSlide> {
           cards[currentCardIndex].URI,
       headers: HEADERS,
     );
+    setState(() => currentCardIndex++);
   }
 
   void swipeTop() {
@@ -154,21 +181,5 @@ class _SongCardRouteState extends State<SongCardSlide> {
   void swipeBottom() {
     print("bottom");
     setState(() => currentCardIndex++);
-  }
-
-  Widget cardControllerRow(SwipeableWidgetController cardController) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-        ElevatedButton(
-          child: Text("Left"),
-          onPressed: () => swipeLeft(),
-        ),
-        ElevatedButton(
-          child: Text("Right"),
-          onPressed: () => swipeRight(),
-        ),
-      ],
-    );
   }
 }
