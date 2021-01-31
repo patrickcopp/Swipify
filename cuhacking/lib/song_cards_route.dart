@@ -20,9 +20,26 @@ var HEADERS;
 List<SongCard> cards = null;
 var args;
 String currentSong;
+int currentCardIndex = 0;
 
 Future<List<SongCard>> initCards(args) async {
-  if (cards != null && cards.length != 0) {
+  if (currentCardIndex > 20) {
+    while (cards.length != 4) {
+      cards.removeAt(0);
+    }
+    currentCardIndex = 0;
+
+    var recommendedList = await getRecommendedTracks(HEADERS);
+
+    for (int i = 0; i < recommendedList.length - 4; i++) {
+      cards.add(SongCard(
+          color: Colors.white70.withOpacity(1),
+          trackTitle: recommendedList[i]["name"],
+          imageUrl: recommendedList[i]["album"]["images"][0]["url"],
+          URI: recommendedList[i]["id"]));
+    }
+  }
+  if (cards != null) {
     return cards;
   }
 
@@ -70,7 +87,6 @@ Future<void> pause() async {
 }
 
 class _SongCardRouteState extends State<SongCardSlide> {
-  int currentCardIndex = 0;
   Future initCardList;
   @override
   void initState() {
