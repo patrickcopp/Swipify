@@ -59,11 +59,9 @@ class _SongCardState extends State<SongCard> {
   }
 
   Container buildCard(isInfoCard) {
-    var additionalInfo = getAdditionalInformation(this.widget.songJson);
     return Container(
       height: isInfoCard ? LONG_HEIGHT : NORMAL_HEIGHT,
       width: 320,
-
       // Warning: hard-coding values like this is a bad practice
       padding: EdgeInsets.only(top: 3,bottom:3),
       decoration: BoxDecoration(
@@ -87,28 +85,51 @@ class _SongCardState extends State<SongCard> {
               this.widget.artist, style: GoogleFonts.oswald(textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
             ),
             if(isInfoCard)
-              Text(this.widget.songJson["album"]["name"],
-                textAlign: TextAlign.center,
-                style: GoogleFonts.oswald(
-                  textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
-              ),
-            if(isInfoCard)
-              Row(children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(30.0),
-                  child: Text(
-                    additionalInfo['duration'] + ", " + additionalInfo['explicit'],
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.oswald(
-                      textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
-                  ),
-                ),
-              ]),
+              buildInfoCard()
       ]),
     );
   }
 
+  List<String> getFeatures(id) {
+    
+  }
 
+FutureBuilder buildInfoCard(){
+    var json = this.widget.songJson;
+  var additionalInfo = getAdditionalInformation(json);
+  var features;
+  return FutureBuilder(
+      builder: (context, cardsSnapshot) {
+        if ((cardsSnapshot.connectionState == ConnectionState.none ||
+            cardsSnapshot.connectionState == ConnectionState.waiting) &&
+            cardsSnapshot.data == null) {
+          return Container();
+        } else {
+          features = cardsSnapshot.data;
+        }
+        return Column(children: [
+          Text(this.widget.songJson["album"]["name"],
+          textAlign: TextAlign.center,
+          style: GoogleFonts.oswald(
+            textStyle: TextStyle(
+                color: Colors.black, letterSpacing: .5, fontSize: 20),),
+        ),
+          Row(children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(30.0),
+              child: Text(
+                additionalInfo['duration'] + ", " + additionalInfo['explicit'],
+                textAlign: TextAlign.center,
+                style: GoogleFonts.oswald(
+                  textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
+              ),
+            ),
+          ]),
+        ]);
+  },
+      future: getFeatures(json['id']),
+  );
+}
 
   Future<void> pause() async {
     try {
