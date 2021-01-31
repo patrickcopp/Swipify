@@ -32,11 +32,15 @@ Future<List<SongCard>> initCards(args) async {
     var recommendedList = await getRecommendedTracks(HEADERS);
 
     for (int i = 0; i < recommendedList.length - 4; i++) {
+      var song = recommendedList[i];
       cards.add(SongCard(
           color: Colors.white70.withOpacity(1),
-          trackTitle: recommendedList[i]["name"],
-          imageUrl: recommendedList[i]["album"]["images"][0]["url"],
-          URI: recommendedList[i]["id"]));
+          trackTitle: song["name"],
+          imageUrl: song["album"]["images"][0]["url"],
+          URI: song["id"],
+          artist: song["artists"][0]["name"],
+          songJson: song,
+      ));
     }
   }
   if (cards != null) {
@@ -49,12 +53,14 @@ Future<List<SongCard>> initCards(args) async {
   var recommendedList = await getRecommendedTracks(HEADERS);
 
   for (int i = 0; i < recommendedList.length; i++) {
+    var song = recommendedList[i];
     _cards.add(SongCard(
         color: Colors.white70.withOpacity(1),
-        trackTitle: recommendedList[i]["name"],
-        imageUrl: recommendedList[i]["album"]["images"][0]["url"],
-        URI: recommendedList[i]["id"],
-        artist: recommendedList[i]["artists"][0]["name"],
+        trackTitle: song["name"],
+        imageUrl: song["album"]["images"][0]["url"],
+        URI: song["id"],
+        artist: song["artists"][0]["name"],
+        songJson: song,
     ));
   }
   return _cards;
