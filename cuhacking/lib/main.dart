@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'song_cards_route.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
@@ -14,7 +15,7 @@ var headers;
 
 void main() {
   runApp(MaterialApp(
-    title: 'Sonder',
+    title: 'Swipify',
     theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Color(0xff191414),
@@ -36,7 +37,10 @@ class FirstScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sonder', style: TextStyle(height: 1, fontSize: 40, color: Color(0xff191414),),),
+        title: //Text('Swipify', style: GoogleFonts.lato(TextStyle(height: 1, fontSize: 40, color: Color(0xff191414))),),
+        Text(
+          'Swipify', style: GoogleFonts.oswald(textStyle: TextStyle(color: Color(0xff191414), letterSpacing: .5, fontSize: 40),),
+        ),
         backgroundColor: Color(0xff1DB954),
       ),
       body: Center(

@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
@@ -53,7 +53,9 @@ Future<List<SongCard>> initCards(args) async {
         color: Colors.white70.withOpacity(1),
         trackTitle: recommendedList[i]["name"],
         imageUrl: recommendedList[i]["album"]["images"][0]["url"],
-        URI: recommendedList[i]["id"]));
+        URI: recommendedList[i]["id"],
+        artist: recommendedList[i]["artists"][0]["name"],
+    ));
   }
   return _cards;
 }
@@ -61,29 +63,6 @@ Future<List<SongCard>> initCards(args) async {
 void setStatus(String code, {String message = ''}) {
   var text = message.isEmpty ? '' : ' : $message';
   print('$code$text');
-}
-
-Future<void> play(songUri) async {
-  currentSong = songUri;
-  var _uri = "spotify:track:" + songUri;
-  try {
-    await SpotifySdk.play(spotifyUri: _uri);
-  } on PlatformException catch (e) {
-    setStatus(e.code, message: e.message);
-  } on MissingPluginException {
-    setStatus('not implemented');
-  }
-}
-
-Future<void> pause() async {
-  try {
-    await SpotifySdk.pause();
-    currentSong = "";
-  } on PlatformException catch (e) {
-    setStatus(e.code, message: e.message);
-  } on MissingPluginException {
-    setStatus('not implemented');
-  }
 }
 
 class _SongCardRouteState extends State<SongCardSlide> {
@@ -103,9 +82,6 @@ class _SongCardRouteState extends State<SongCardSlide> {
           return Container();
         } else {
           cards = cardsSnapshot.data;
-          if (currentCardIndex < cards.length) {
-            play(cards[currentCardIndex].URI);
-          }
         }
         return SafeArea(
           child: Column(
@@ -142,19 +118,6 @@ class _SongCardRouteState extends State<SongCardSlide> {
                     ),
                   ),
                 ),
-              Center(
-                child: ElevatedButton(
-                  child: Text("Play/Pause", style: TextStyle(height: 1.25, fontSize: 40, color: Color(0xff191414),),),
-                  onPressed: () {
-                    String uri = cards[currentCardIndex].URI;
-                    currentSong == uri ? pause() : play(uri);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Color(0xff1DB954), // background
-                    onPrimary: Color(0xff191414), // foreground
-                  ),
-                ),
-              )
             ],
           ),
         );
@@ -168,7 +131,9 @@ class _SongCardRouteState extends State<SongCardSlide> {
     args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sonder', style: TextStyle(height: 1, fontSize: 40, color: Color(0xff191414),),),
+        title: Text(
+          'Swipify', style: GoogleFonts.oswald(textStyle: TextStyle(color: Color(0xff191414), letterSpacing: .5, fontSize: 40),),
+        ),
         backgroundColor: Color(0xff1DB954),
         automaticallyImplyLeading: true,
       ),
@@ -178,15 +143,11 @@ class _SongCardRouteState extends State<SongCardSlide> {
   }
 
   void swipeLeft() {
-    print("left");
-    pause();
     // NOTE: it is your job to change the card
     setState(() => currentCardIndex++);
   }
 
   Future<void> swipeRight() async {
-    print("right");
-    pause();
     var res = http.post(
       'https://api.spotify.com/v1/playlists/' +
           PLAYLIST_ID +
