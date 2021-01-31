@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:swipeable_card/swipeable_card.dart';
 import 'package:http/http.dart' as http;
-
+import 'recommendations.dart';
 import 'song_card.dart';
 
 class SongCardSlide extends StatefulWidget {
@@ -15,30 +15,42 @@ class SongCardSlide extends StatefulWidget {
   _SongCardRouteState createState() => _SongCardRouteState();
 }
 
-List<SongCard> cards;
-String songUri;
-bool isPlaying = false;
+var PLAYLIST_ID = "";
+var HEADERS;
+List<SongCard> cards = null;
+var args;
+String currentSong;
+
+Future<List<SongCard>> initCards(args) async {
+  if (cards != null && cards.length != 0) {
+    return cards;
+  }
+
+  List<SongCard> _cards = new List<SongCard>();
+  PLAYLIST_ID = args["playlistID"];
+  HEADERS = args["headers"];
+  var recommendedList = await getRecommendedTracks(HEADERS);
+
+  for (int i = 0; i < recommendedList.length; i++) {
+    _cards.add(SongCard(
+        color: Colors.white70.withOpacity(1),
+        trackTitle: recommendedList[i]["name"],
+        imageUrl: recommendedList[i]["album"]["images"][0]["url"],
+        URI: recommendedList[i]["id"]));
+  }
+  return _cards;
+}
 
 void setStatus(String code, {String message = ''}) {
   var text = message.isEmpty ? '' : ' : $message';
   print('$code$text');
 }
 
-Future<List<SongCard>> initCards(args) async {
-  List<SongCard> _cards = new List<SongCard>();
-  var resSong = await http.get('https://api.spotify.com/v1/tracks/60Ctoy2M8nmDaI7Fax3fTL', headers: args['headers']);
-  var song = jsonDecode(resSong.body);
-  songUri = song["uri"];
-  for (int i = 0; i < 5; i++) {
-    _cards.add(SongCard(color: Colors.white70, trackTitle: song["name"], imageUrl: song["album"]["images"][0]["url"], songUri: song["uri"],));
-  }
-  return _cards;
-}
-
 Future<void> play(songUri) async {
+  currentSong = songUri;
+  var _uri = "spotify:track:" + songUri;
   try {
-    await SpotifySdk.play(spotifyUri: songUri);
-    isPlaying = true;
+    await SpotifySdk.play(spotifyUri: _uri);
   } on PlatformException catch (e) {
     setStatus(e.code, message: e.message);
   } on MissingPluginException {
@@ -49,7 +61,7 @@ Future<void> play(songUri) async {
 Future<void> pause() async {
   try {
     await SpotifySdk.pause();
-    isPlaying = false;
+    currentSong = "";
   } on PlatformException catch (e) {
     setStatus(e.code, message: e.message);
   } on MissingPluginException {
@@ -59,11 +71,18 @@ Future<void> pause() async {
 
 class _SongCardRouteState extends State<SongCardSlide> {
   int currentCardIndex = 0;
+  Future initCardList;
+  @override
+  void initState() {
+    initCardList = initCards(args);
+  }
+
   SwipeableWidgetController _cardController = SwipeableWidgetController();
   Widget projectWidget(args) {
     return FutureBuilder(
       builder: (context, cardsSnapshot) {
-        if ((cardsSnapshot.connectionState == ConnectionState.none || cardsSnapshot.connectionState == ConnectionState.waiting) &&
+        if ((cardsSnapshot.connectionState == ConnectionState.none ||
+                cardsSnapshot.connectionState == ConnectionState.waiting) &&
             cardsSnapshot.data == null) {
           return Container();
         } else {
@@ -92,18 +111,22 @@ class _SongCardRouteState extends State<SongCardSlide> {
                   ],
                 )
               else
-              // if the deck is complete, add a button to reset deck
+                // if the deck is complete, add a button to reset deck
                 Center(
                   child: ElevatedButton(
                     child: Text("Reset deck"),
-                    onPressed: () => setState(() => currentCardIndex = 0),
+                    onPressed: () {
+                      setState(() => currentCardIndex = 0);
+                      cards = null;
+                    },
                   ),
                 ),
               Center(
                 child: ElevatedButton(
                   child: Text("Play/Pause"),
                   onPressed: () {
-                    isPlaying ? pause() : play(songUri);
+                    String uri = cards[currentCardIndex].URI;
+                    currentSong == uri ? pause() : play(uri);
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.cyan, // background
@@ -121,7 +144,7 @@ class _SongCardRouteState extends State<SongCardSlide> {
 
   @override
   Widget build(BuildContext context) {
-    var args = ModalRoute.of(context).settings.arguments;
+    args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
         title: Text('Songs'),
@@ -138,14 +161,20 @@ class _SongCardRouteState extends State<SongCardSlide> {
     setState(() => currentCardIndex++);
   }
 
-  void swipeRight() {
+  Future<void> swipeRight() async {
     print("right");
+    var res = http.post(
+      'https://api.spotify.com/v1/playlists/' +
+          PLAYLIST_ID +
+          '/tracks?uris=spotify:track:' +
+          cards[currentCardIndex].URI,
+      headers: HEADERS,
+    );
     setState(() => currentCardIndex++);
   }
 
   void swipeTop() {
     print("top");
-    play(songUri);
     setState(() => currentCardIndex++);
   }
 
