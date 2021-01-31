@@ -1,12 +1,14 @@
 import 'dart:collection';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
+import 'package:http/http.dart' as http;
 
 const NORMAL_HEIGHT = 400.0;
-const LONG_HEIGHT = 600.0;
+const LONG_HEIGHT = 525.0;
 
 class SongCard extends StatefulWidget {
   const SongCard(
@@ -16,7 +18,8 @@ class SongCard extends StatefulWidget {
   this.imageUrl = "none",
   this.URI = "",
   this.artist="",
-  this.songJson=null})
+  this.songJson,
+  this.headers})
   : super(key: key);
   final Color color;
   final String trackTitle;
@@ -24,6 +27,7 @@ class SongCard extends StatefulWidget {
   final String URI;
   final String artist;
   final songJson;
+  final headers;
 
   @override
   _SongCardState createState() => _SongCardState();
@@ -90,8 +94,15 @@ class _SongCardState extends State<SongCard> {
     );
   }
 
-  List<String> getFeatures(id) {
-    
+  Future<Map<String, String>> getFeatures(id) async {
+    var getFeatures = await http.get(
+        'https://api.spotify.com/v1/audio-features/$id',
+        headers: this.widget.headers);
+    var features = jsonDecode(getFeatures.body);
+    var dancability = features['danceability'] * 100.0;
+    var energy = features['energy'] * 100.0;
+    var acousticness = features['acousticness'] * 100.0;
+    return {"dance" : '$dancability% Danceable', "energy": '$energy% Energetic', "acoustic": '$acousticness% Acoustic'};
   }
 
 FutureBuilder buildInfoCard(){
@@ -99,13 +110,13 @@ FutureBuilder buildInfoCard(){
   var additionalInfo = getAdditionalInformation(json);
   var features;
   return FutureBuilder(
-      builder: (context, cardsSnapshot) {
-        if ((cardsSnapshot.connectionState == ConnectionState.none ||
-            cardsSnapshot.connectionState == ConnectionState.waiting) &&
-            cardsSnapshot.data == null) {
+      builder: (context, featuresSnapshot) {
+        if ((featuresSnapshot.connectionState == ConnectionState.none ||
+            featuresSnapshot.connectionState == ConnectionState.waiting) &&
+            featuresSnapshot.data == null) {
           return Container();
         } else {
-          features = cardsSnapshot.data;
+          features = featuresSnapshot.data;
         }
         return Column(children: [
           Text(this.widget.songJson["album"]["name"],
@@ -114,15 +125,24 @@ FutureBuilder buildInfoCard(){
             textStyle: TextStyle(
                 color: Colors.black, letterSpacing: .5, fontSize: 20),),
         ),
-          Row(children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(30.0),
-              child: Text(
-                additionalInfo['duration'] + ", " + additionalInfo['explicit'],
-                textAlign: TextAlign.center,
-                style: GoogleFonts.oswald(
-                  textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
-              ),
+          Column(children: <Widget>[
+          Text(
+            features['dance'],
+            textAlign: TextAlign.center,
+            style: GoogleFonts.oswald(
+            textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
+            ),
+            Text(
+              features['energy'],
+              textAlign: TextAlign.center,
+              style: GoogleFonts.oswald(
+                textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
+            ),
+            Text(
+              features['acoustic'],
+              textAlign: TextAlign.center,
+              style: GoogleFonts.oswald(
+                textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
             ),
           ]),
         ]);

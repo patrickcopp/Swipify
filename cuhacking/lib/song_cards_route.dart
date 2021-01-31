@@ -44,6 +44,7 @@ Future<List<SongCard>> initCards(args) async {
             ? song["artists"][0]["name"]
             : '$song["artists"][0]["name"].substring(0, 30)}...',
         songJson: song,
+        headers: HEADERS,
       ));
     }
   }
@@ -71,6 +72,7 @@ Future<List<SongCard>> initCards(args) async {
           ? song["artists"][0]["name"]
           : '$song["artists"][0]["name"].substring(0, 30)}...',
       songJson: song,
+      headers: HEADERS,
     ));
   }
   return _cards;
