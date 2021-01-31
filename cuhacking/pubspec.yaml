@@ -41,6 +41,11 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  fonts:
+    - family: Gotham
+      fonts:
+          - asset: assets/GothamBold.ttf
+
   assets:
     - assets/loginbutton.png
   # The following line ensures that the Material Icons font is

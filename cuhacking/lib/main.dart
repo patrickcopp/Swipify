@@ -41,7 +41,7 @@ class FirstScreen extends StatelessWidget {
       appBar: AppBar(
         title: //Text('Swipify', style: GoogleFonts.lato(TextStyle(height: 1, fontSize: 40, color: Color(0xff191414))),),
         Text(
-          'Swipify', style: GoogleFonts.oswald(textStyle: TextStyle(color: Color(0xff191414), letterSpacing: .5, fontSize: 40),),
+          'Swipify', style: TextStyle(color: Color(0xff191414), fontSize: 40, fontFamily: "Gotham", letterSpacing: -1.5),
         ),
         backgroundColor: Color(0xff1DB954),
       ),

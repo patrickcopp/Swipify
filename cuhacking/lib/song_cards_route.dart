@@ -134,10 +134,10 @@ class _SongCardRouteState extends State<SongCardSlide> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Swipify', style: GoogleFonts.oswald(textStyle: TextStyle(color: Color(0xff191414), letterSpacing: .5, fontSize: 40),),
+          'Swipify', style: TextStyle(color: Color(0xff191414), fontSize: 40, fontFamily: "Gotham", letterSpacing: -1.5),
         ),
         backgroundColor: Color(0xff1DB954),
-        automaticallyImplyLeading: true,
+        automaticallyImplyLeading: false,
       ),
       body: projectWidget(args),
       backgroundColor: Color(0xff191414),
