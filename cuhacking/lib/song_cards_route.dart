@@ -13,16 +13,21 @@ class SongCardSlide extends StatefulWidget {
   _SongCardRouteState createState() => _SongCardRouteState();
 }
 
-List<SongCard> cards;
+List<SongCard> cards = null;
+var args;
 
 Future<List<SongCard>> initCards(args) async {
+  if (cards != null && cards.length != 0) {
+    return cards;
+  }
+
   List<SongCard> _cards = new List<SongCard>();
 
   var recommendedList = await getRecommendedTracks(args['headers']);
 
   for (int i = 0; i < recommendedList.length; i++) {
     _cards.add(SongCard(
-      color: Colors.white70,
+      color: Colors.white70.withOpacity(1),
       trackTitle: recommendedList[i]["name"],
       imageUrl: recommendedList[i]["album"]["images"][0]["url"],
     ));
@@ -32,6 +37,12 @@ Future<List<SongCard>> initCards(args) async {
 
 class _SongCardRouteState extends State<SongCardSlide> {
   int currentCardIndex = 0;
+  Future initCardList;
+  @override
+  void initState() {
+    initCardList = initCards(args);
+  }
+
   SwipeableWidgetController _cardController = SwipeableWidgetController();
   Widget projectWidget(args) {
     return FutureBuilder(
@@ -70,7 +81,10 @@ class _SongCardRouteState extends State<SongCardSlide> {
                 Center(
                   child: ElevatedButton(
                     child: Text("Reset deck"),
-                    onPressed: () => setState(() => currentCardIndex = 0),
+                    onPressed: () {
+                      setState(() => currentCardIndex = 0);
+                      cards = null;
+                    },
                   ),
                 ),
 
@@ -101,7 +115,7 @@ class _SongCardRouteState extends State<SongCardSlide> {
 
   @override
   Widget build(BuildContext context) {
-    var args = ModalRoute.of(context).settings.arguments;
+    args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
         title: Text('Songs'),
