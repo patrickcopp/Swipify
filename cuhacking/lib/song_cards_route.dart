@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:swipeable_card/swipeable_card.dart';
 import 'package:http/http.dart' as http;
-
+import 'recommendations.dart';
 import 'song_card.dart';
 
 class SongCardSlide extends StatefulWidget {
@@ -18,11 +18,15 @@ var PLAYLIST_ID = "";
 
 Future<List<SongCard>> initCards(args) async {
   List<SongCard> _cards = new List<SongCard>();
-  PLAYLIST_ID = args['playlistID'];
-  var resSong = await http.get('https://api.spotify.com/v1/tracks/60Ctoy2M8nmDaI7Fax3fTL', headers: args['headers']);
-  var song = jsonDecode(resSong.body);
-  for (int i = 0; i < 5; i++) {
-    _cards.add(SongCard(color: Colors.white70, trackTitle: song["name"], imageUrl: song["album"]["images"][0]["url"],));
+
+  var recommendedList = await getRecommendedTracks(args['headers']);
+
+  for (int i = 0; i < recommendedList.length; i++) {
+    _cards.add(SongCard(
+      color: Colors.white70,
+      trackTitle: recommendedList[i]["name"],
+      imageUrl: recommendedList[i]["album"]["images"][0]["url"],
+    ));
   }
   return _cards;
 }
@@ -33,7 +37,8 @@ class _SongCardRouteState extends State<SongCardSlide> {
   Widget projectWidget(args) {
     return FutureBuilder(
       builder: (context, cardsSnapshot) {
-        if ((cardsSnapshot.connectionState == ConnectionState.none || cardsSnapshot.connectionState == ConnectionState.waiting) &&
+        if ((cardsSnapshot.connectionState == ConnectionState.none ||
+                cardsSnapshot.connectionState == ConnectionState.waiting) &&
             cardsSnapshot.data == null) {
           return Container();
         } else {
@@ -62,7 +67,7 @@ class _SongCardRouteState extends State<SongCardSlide> {
                   ],
                 )
               else
-              // if the deck is complete, add a button to reset deck
+                // if the deck is complete, add a button to reset deck
                 Center(
                   child: ElevatedButton(
                     child: Text("Reset deck"),
