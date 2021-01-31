@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
@@ -131,7 +131,9 @@ class _SongCardRouteState extends State<SongCardSlide> {
     args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sonder', style: TextStyle(height: 1, fontSize: 40, color: Color(0xff191414),),),
+        title: Text(
+          'Swipify', style: GoogleFonts.oswald(textStyle: TextStyle(color: Color(0xff191414), letterSpacing: .5, fontSize: 40),),
+        ),
         backgroundColor: Color(0xff1DB954),
         automaticallyImplyLeading: true,
       ),
