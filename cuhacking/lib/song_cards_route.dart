@@ -33,10 +33,16 @@ Future<List<SongCard>> initCards(args) async {
 
     for (int i = 0; i < recommendedList.length - 4; i++) {
       cards.add(SongCard(
-          color: Colors.white70.withOpacity(1),
-          trackTitle: recommendedList[i]["name"],
-          imageUrl: recommendedList[i]["album"]["images"][0]["url"],
-          URI: recommendedList[i]["id"]));
+        color: Colors.white70.withOpacity(1),
+        trackTitle: recommendedList[i]["name"].length <= 30
+            ? recommendedList[i]["name"]
+            : '${recommendedList[i]["name"].substring(0, 30)}...',
+        imageUrl: recommendedList[i]["album"]["images"][0]["url"],
+        URI: recommendedList[i]["id"],
+        artist: recommendedList[i]["artists"][0]["name"].length <= 30
+            ? recommendedList[i]["artists"][0]["name"]
+            : '$recommendedList[i]["artists"][0]["name"].substring(0, 30)}...',
+      ));
     }
   }
   if (cards != null) {
@@ -52,11 +58,15 @@ Future<List<SongCard>> initCards(args) async {
 
   for (int i = 0; i < recommendedList.length; i++) {
     _cards.add(SongCard(
-        color: Colors.white70.withOpacity(1),
-        trackTitle: recommendedList[i]["name"],
-        imageUrl: recommendedList[i]["album"]["images"][0]["url"],
-        URI: recommendedList[i]["id"],
-        artist: recommendedList[i]["artists"][0]["name"],
+      color: Colors.white70.withOpacity(1),
+      trackTitle: recommendedList[i]["name"].length <= 30
+          ? recommendedList[i]["name"]
+          : '${recommendedList[i]["name"].substring(0, 30)}...',
+      imageUrl: recommendedList[i]["album"]["images"][0]["url"],
+      URI: recommendedList[i]["id"],
+      artist: recommendedList[i]["artists"][0]["name"].length <= 30
+          ? recommendedList[i]["artists"][0]["name"]
+          : '$recommendedList[i]["artists"][0]["name"].substring(0, 30)}...',
     ));
   }
   return _cards;
@@ -109,7 +119,14 @@ class _SongCardRouteState extends State<SongCardSlide> {
                 // if the deck is complete, add a button to reset deck
                 Center(
                   child: ElevatedButton(
-                    child: Text("Reset deck", style: TextStyle(height: 1, fontSize: 40, color: Color(0xff191414),),),
+                    child: Text(
+                      "Reset deck",
+                      style: TextStyle(
+                        height: 1,
+                        fontSize: 40,
+                        color: Color(0xff191414),
+                      ),
+                    ),
                     onPressed: () {
                       setState(() => currentCardIndex = 0);
                       cards = null;
