@@ -80,3 +80,4 @@ class _SongCardState extends State<SongCard> {
     await SpotifySdk.play(spotifyUri: _uri);
   }
 }
+
