@@ -58,34 +58,57 @@ class FirstScreen extends StatelessWidget {
   }
 
   Future<void> connectToSpotifyRemote(BuildContext context) async {
-    var result = await SpotifySdk.connectToSpotifyRemote(
-        clientId: "ed2803e840844844b3120ab2cc82dcd5",
-        redirectUrl: "http://localhost:8888/callback");
-    authToken = await SpotifySdk.getAuthenticationToken(
-        clientId: CLIENT_STRING,
-        redirectUrl: REDIRECT_URL,
-        scope: 'app-remote-control, '
-            'user-modify-playback-state, '
-            'playlist-read-private, '
-            'playlist-modify-public,user-read-currently-playing, '
-            'playlist-modify-public, '
-            'user-top-read, '
-            'playlist-modify-private');
+    try {
+      var result = await SpotifySdk.connectToSpotifyRemote(
+          clientId: "ed2803e840844844b3120ab2cc82dcd5",
+          redirectUrl: "http://localhost:8888/callback");
+      authToken = await SpotifySdk.getAuthenticationToken(
+          clientId: CLIENT_STRING,
+          redirectUrl: REDIRECT_URL,
+          scope: 'app-remote-control, '
+              'user-modify-playback-state, '
+              'playlist-read-private, '
+              'playlist-modify-public,user-read-currently-playing, '
+              'playlist-modify-public, '
+              'user-top-read, '
+              'playlist-modify-private');
 
-    headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $authToken'
-    };
+      headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $authToken'
+      };
 
-    var res = await http.get('https://api.spotify.com/v1/me', headers: headers);
-    var playlistCreated = await makeNewPlaylist(res.body);
+      var res = await http.get(
+          'https://api.spotify.com/v1/me', headers: headers);
+      var playlistCreated = await makeNewPlaylist(res.body);
 
-    Navigator.pushNamed(
-      context,
-      '/second',
-      arguments: {'headers': headers, 'playlistID': playlistCreated},
-    );
+      Navigator.pushNamed(
+        context,
+        '/second',
+        arguments: {'headers': headers, 'playlistID': playlistCreated},
+      );
+    }
+    on Exception catch (err) {
+      await showDialog(
+        context: context,
+        builder: (context) => new AlertDialog(
+          title: new Text('Spotify Needed!', style: TextStyle(color: Color(0xff191414), fontSize: 40, fontFamily: "Gotham", letterSpacing: -1.5)),
+          backgroundColor: Color(0xff1DB954),
+          content: Text('Download Spotify to Continue.', style: TextStyle(color: Color(0xff191414), fontSize: 15, fontFamily: "Gotham", letterSpacing: -1.5)),
+          actions: <Widget>[
+            new FlatButton(
+              color: Color(0xff191414),
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true)
+                    .pop(); // dismisses only the dialog and returns nothing
+              },
+              child: new Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   makeNewPlaylist(String body) async {
