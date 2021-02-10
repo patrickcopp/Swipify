@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import "dart:math";
 
 Future<List<dynamic>> getRecommendedTracks(headers) async {
+  if(headers == null)
+    return null;
   var getTopSongs = await http.get(
       'https://api.spotify.com/v1/me/top/tracks?limit=10',
       headers: headers);

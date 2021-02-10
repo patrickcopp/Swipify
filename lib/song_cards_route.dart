@@ -59,6 +59,9 @@ Future<List<SongCard>> initCards(args) async {
   }
   var recommendedList = await getRecommendedTracks(HEADERS);
 
+  if (recommendedList == null)
+    return _cards;
+
   for (int i = 0; i < recommendedList.length; i++) {
     var song = recommendedList[i];
     _cards.add(SongCard(
@@ -101,11 +104,12 @@ class _SongCardRouteState extends State<SongCardSlide> {
         } else {
           cards = cardsSnapshot.data;
         }
-        return SafeArea(
+        return
+          SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              if (currentCardIndex < cards.length)
+              if (cards != null && currentCardIndex < cards.length)
                 SwipeableWidget(
                   key: ObjectKey(currentCardIndex),
                   child: cards[currentCardIndex],
@@ -122,7 +126,6 @@ class _SongCardRouteState extends State<SongCardSlide> {
                   ],
                 )
               else
-                // if the deck is complete, add a button to reset deck
                 Center(
                   child: ElevatedButton(
                     child: Text(

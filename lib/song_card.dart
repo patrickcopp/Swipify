@@ -154,7 +154,7 @@ FutureBuilder buildInfoCard(){
     try {
       await SpotifySdk.pause();
     } on PlatformException catch (e) {
-      print("FUCK: " + e.code + " " + e.message);
+      print("ERROR: " + e.code + " " + e.message);
     } on MissingPluginException {
       print('not implemented');
     }
