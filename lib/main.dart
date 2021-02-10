@@ -123,17 +123,17 @@ class FirstScreen extends StatelessWidget {
       'https://api.spotify.com/v1/me/playlists?limit=50',
       headers: headers,
     );
-    if (!res.body.contains("\"name\" : \"cuHackPlaylist\"")) {
+    if (!res.body.contains("\"name\" : \"Swipify\"")) {
       res = await http.post(
           'https://api.spotify.com/v1/users/' + USER_ID + '/playlists',
           headers: headers,
           body:
-              '{"name": "cuHackPlaylist","description": "Hackerman strikes again.","public": false}');
+              '{"name": "Swipify","description": "Right swiping has never been so musical.","public": false}');
       if (res.statusCode != 201) return false;
       return jsonDecode(res.body)["id"];
     } else {
       return jsonDecode(res.body)["items"].firstWhere((entry) {
-        return entry["name"] == "cuHackPlaylist";
+        return entry["name"] == "Swipify";
       })["id"];
     }
   }

@@ -181,6 +181,7 @@ class _SongCardRouteState extends State<SongCardSlide> {
   }
 
   Future<void> swipeRight() async {
+    setState(() => currentCardIndex++);
     var res = http.post(
       'https://api.spotify.com/v1/playlists/' +
           PLAYLIST_ID +
@@ -188,6 +189,5 @@ class _SongCardRouteState extends State<SongCardSlide> {
           cards[currentCardIndex].URI,
       headers: HEADERS,
     );
-    setState(() => currentCardIndex++);
   }
 }
