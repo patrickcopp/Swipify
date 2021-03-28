@@ -28,7 +28,10 @@ class SongCard extends StatefulWidget {
   final String artist;
   final songJson;
   final headers;
-
+  Future<void> play() async {
+    var _uri = "spotify:track:" + this.URI;
+    await SpotifySdk.play(spotifyUri: _uri);
+  }
   @override
   _SongCardState createState() => _SongCardState();
 }
@@ -38,7 +41,6 @@ class _SongCardState extends State<SongCard> {
   var isInfoCard = false;
   @override
   Widget build(BuildContext context) {
-    this.play();
     return InkWell(
       onTap: (){
         this.PAUSED ? resume() : pause();
@@ -163,9 +165,6 @@ FutureBuilder buildInfoCard(){
   Future<void> resume() async {
     await SpotifySdk.resume();
   }
-  Future<void> play() async {
-    var _uri = "spotify:track:" + this.widget.URI;
-    await SpotifySdk.play(spotifyUri: _uri);
-  }
+
 }
 

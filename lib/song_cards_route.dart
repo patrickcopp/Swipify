@@ -178,6 +178,7 @@ class _SongCardRouteState extends State<SongCardSlide> {
   void swipeLeft() {
     // NOTE: it is your job to change the card
     setState(() => currentCardIndex++);
+    cards[currentCardIndex].play();
   }
 
   Future<void> swipeRight() async {
@@ -189,5 +190,6 @@ class _SongCardRouteState extends State<SongCardSlide> {
       headers: HEADERS,
     );
     setState(() => currentCardIndex++);
+    cards[currentCardIndex].play();
   }
 }
