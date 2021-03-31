@@ -100,9 +100,9 @@ class _SongCardState extends State<SongCard> {
         'https://api.spotify.com/v1/audio-features/$id',
         headers: this.widget.headers);
     var features = jsonDecode(getFeatures.body);
-    var dancability = features['danceability'] * 100.0;
-    var energy = features['energy'] * 100.0;
-    var acousticness = features['acousticness'] * 100.0;
+    var dancability = features['danceability'].toString().substring(2,4);
+    var energy = features['energy'].toString().substring(2,4);
+    var acousticness = features['acousticness'].toString().substring(2,4);
     return {"dance" : '$dancability% Danceable', "energy": '$energy% Energetic', "acoustic": '$acousticness% Acoustic'};
   }
 
