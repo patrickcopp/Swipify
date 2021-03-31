@@ -103,6 +103,7 @@ class _SongCardRouteState extends State<SongCardSlide> {
           return Container();
         } else {
           cards = cardsSnapshot.data;
+          cards[currentCardIndex].play();
         }
         return
           SafeArea(
