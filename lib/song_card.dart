@@ -28,42 +28,30 @@ class SongCard extends StatefulWidget {
   final String artist;
   final songJson;
   final headers;
-
+  Future<void> play() async {
+    var _uri = "spotify:track:" + this.URI;
+    await SpotifySdk.play(spotifyUri: _uri);
+  }
   @override
   _SongCardState createState() => _SongCardState();
 }
 
 class _SongCardState extends State<SongCard> {
   var PAUSED = false;
-  var isInfoCard = false;
   @override
   Widget build(BuildContext context) {
-    this.play();
     return InkWell(
       onTap: (){
         this.PAUSED ? resume() : pause();
         this.PAUSED =! this.PAUSED;
       },
-      onLongPress: () {
-        setState(() {
-          isInfoCard = !isInfoCard;
-        });
-      },
-      child: buildCard(isInfoCard)
+      child: buildCard()
     );
   }
 
-  Map<String, String> getAdditionalInformation(json) {
-    Duration songDuration = Duration(milliseconds: json['duration_ms']);
-    String explicit = json['explicit'] ? "explicit" : "not explicit";
-    return {
-      "duration": songDuration.toString().substring(0,songDuration.toString().indexOf('.'))
-    };
-  }
-
-  Container buildCard(isInfoCard) {
+  Container buildCard() {
     return Container(
-      height: isInfoCard ? LONG_HEIGHT : NORMAL_HEIGHT,
+      height: NORMAL_HEIGHT,
       width: 320,
       // Warning: hard-coding values like this is a bad practice
       padding: EdgeInsets.only(top: 3,bottom:3),
@@ -86,69 +74,12 @@ class _SongCardState extends State<SongCard> {
             new Padding(padding: EdgeInsets.only(top: 3),),
             Text(
               this.widget.artist, style: GoogleFonts.oswald(textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
-            ),
-            if(isInfoCard)
-              buildInfoCard()
+            )
       ]),
     );
   }
 
-  Future<Map<String, String>> getFeatures(id) async {
-    var getFeatures = await http.get(
-        'https://api.spotify.com/v1/audio-features/$id',
-        headers: this.widget.headers);
-    var features = jsonDecode(getFeatures.body);
-    var dancability = features['danceability'] * 100.0;
-    var energy = features['energy'] * 100.0;
-    var acousticness = features['acousticness'] * 100.0;
-    return {"dance" : '$dancability% Danceable', "energy": '$energy% Energetic', "acoustic": '$acousticness% Acoustic'};
-  }
 
-FutureBuilder buildInfoCard(){
-    var json = this.widget.songJson;
-  var additionalInfo = getAdditionalInformation(json);
-  var features;
-  return FutureBuilder(
-      builder: (context, featuresSnapshot) {
-        if ((featuresSnapshot.connectionState == ConnectionState.none ||
-            featuresSnapshot.connectionState == ConnectionState.waiting) &&
-            featuresSnapshot.data == null) {
-          return Container();
-        } else {
-          features = featuresSnapshot.data;
-        }
-        return Column(children: [
-          Text(this.widget.songJson["album"]["name"],
-          textAlign: TextAlign.center,
-          style: GoogleFonts.oswald(
-            textStyle: TextStyle(
-                color: Colors.black, letterSpacing: .5, fontSize: 20),),
-        ),
-          Column(children: <Widget>[
-          Text(
-            features['dance'],
-            textAlign: TextAlign.center,
-            style: GoogleFonts.oswald(
-            textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
-            ),
-            Text(
-              features['energy'],
-              textAlign: TextAlign.center,
-              style: GoogleFonts.oswald(
-                textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
-            ),
-            Text(
-              features['acoustic'],
-              textAlign: TextAlign.center,
-              style: GoogleFonts.oswald(
-                textStyle: TextStyle(color: Colors.black, letterSpacing: .5, fontSize: 20),),
-            ),
-          ]),
-        ]);
-  },
-      future: getFeatures(json['id']),
-  );
-}
 
   Future<void> pause() async {
     try {
@@ -163,9 +94,6 @@ FutureBuilder buildInfoCard(){
   Future<void> resume() async {
     await SpotifySdk.resume();
   }
-  Future<void> play() async {
-    var _uri = "spotify:track:" + this.widget.URI;
-    await SpotifySdk.play(spotifyUri: _uri);
-  }
+
 }
 

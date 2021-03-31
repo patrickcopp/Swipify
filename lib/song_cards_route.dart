@@ -103,6 +103,7 @@ class _SongCardRouteState extends State<SongCardSlide> {
           return Container();
         } else {
           cards = cardsSnapshot.data;
+          cards[currentCardIndex].play();
         }
         return
           SafeArea(
@@ -178,10 +179,10 @@ class _SongCardRouteState extends State<SongCardSlide> {
   void swipeLeft() {
     // NOTE: it is your job to change the card
     setState(() => currentCardIndex++);
+    cards[currentCardIndex].play();
   }
 
   Future<void> swipeRight() async {
-    setState(() => currentCardIndex++);
     var res = http.post(
       'https://api.spotify.com/v1/playlists/' +
           PLAYLIST_ID +
@@ -189,5 +190,7 @@ class _SongCardRouteState extends State<SongCardSlide> {
           cards[currentCardIndex].URI,
       headers: HEADERS,
     );
+    setState(() => currentCardIndex++);
+    cards[currentCardIndex].play();
   }
 }

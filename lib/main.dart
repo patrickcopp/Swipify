@@ -45,13 +45,16 @@ class FirstScreen extends StatelessWidget {
         ),
         backgroundColor: Color(0xff1DB954),
       ),
-      body: Column(children: <Widget>[
+      body: Column(
+        children: <Widget>[
         new Padding(padding: EdgeInsets.only(top: 300),),
+          new Padding(padding: EdgeInsets.only(left: MediaQuery.of(context).size.width),),
         GestureDetector(
             onTap: () => connectToSpotifyRemote(context),
-            child: Image.asset('assets/loginbutton.png')
+            child: Image.asset('assets/loginbutton.png'),
         )
-      ]
+      ],
+
       ),
       backgroundColor: Color(0xff191414),
     );
