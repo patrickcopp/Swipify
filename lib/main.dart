@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -16,7 +17,12 @@ var authToken = "";
 var headers;
 
 void main() {
-  runApp(MaterialApp(
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Than we setup preferred orientations,
+  // and only after it finished we run our app
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((value) => runApp((MaterialApp(
     title: 'Swipify',
     theme: ThemeData(
         brightness: Brightness.dark,
@@ -31,7 +37,7 @@ void main() {
       // When navigating to the "/second" route, build the SecondScreen widget.
       '/second': (context) => SongCardSlide(),
     },
-  ));
+  ))));
 }
 
 class FirstScreen extends StatelessWidget {
